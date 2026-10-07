@@ -20,8 +20,13 @@ if not exist "%ELECTRON%" (
   exit /b 1
 )
 
-where py >nul 2>&1
-if not errorlevel 1 set "AI_ASTRA_BACKEND_PYTHON=py"
+rem Prefer the project's own environment (.venv, made with: python -m venv .venv
+rem then .venv\Scripts\python -m pip install -r requirements.txt).
+if exist "%ROOT%.venv\Scripts\python.exe" set "AI_ASTRA_BACKEND_PYTHON=%ROOT%.venv\Scripts\python.exe"
+if not defined AI_ASTRA_BACKEND_PYTHON (
+  where py >nul 2>&1
+  if not errorlevel 1 set "AI_ASTRA_BACKEND_PYTHON=py"
+)
 if not defined AI_ASTRA_BACKEND_PYTHON (
   where python >nul 2>&1
   if not errorlevel 1 set "AI_ASTRA_BACKEND_PYTHON=python"

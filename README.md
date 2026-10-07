@@ -21,13 +21,18 @@ On Windows, double-click `Run_AIAstra.bat`. The safety-hardened launcher only va
 For a clean setup:
 
 ```powershell
-py -3.11 -m venv .venv
+python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 cd standalone_frontend
 npm ci
 cd ..
 Run_AIAstra.bat
 ```
+
+`Run_AIAstra.bat` uses `.venv` automatically when it exists. `requirements.txt` pins the direct
+dependencies; `requirements.lock.txt` pins all 41 packages for an exact rebuild (Python 3.13).
+In the commands below, `py -3` can be replaced with `.venv\Scripts\python` (or
+`ai_astra_main\.venv\Scripts\python` from the folder above).
 
 If the full interface looks wrong, launch `Launch_AIAstra_Test.cmd`. It opens a deliberately small diagnostic client with backend status, one prompt, one response, cognitive-control fields (goal, action, directive, hygiene, realization mode, continuity, episode), and raw request details. By default it uses a temporary state directory so diagnostic messages do not alter the trained brain; set `AI_ASTRA_TEST_USE_LIVE_STATE=1` before launching when you explicitly want to test the live state.
 

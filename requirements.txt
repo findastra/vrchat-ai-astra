@@ -1,10 +1,10 @@
-﻿PySide6
-psutil
-pyvista
-pyvistaqt
-networkx
-pandas
-numpy
+PySide6==6.11.2
+psutil==7.2.2
+pyvista==0.49.0
+pyvistaqt==0.13.1
+networkx==3.7
+pandas==3.0.6
+numpy==2.5.3
 # Optional GPU acceleration packages (will be installed if suitable GPU detected):
 # pyopencl
 # pycuda
