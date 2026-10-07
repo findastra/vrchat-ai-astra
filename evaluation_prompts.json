@@ -1,0 +1,34 @@
+[
+  {
+    "id": "identity",
+    "prompt": "What kind of AI are you, and how do you learn? Answer in two concise sentences."
+  },
+  {
+    "id": "logic",
+    "prompt": "If every glint is a moth and no moth is silent, could any glint be silent? Give one reason."
+  },
+  {
+    "id": "science",
+    "prompt": "Write one concise sentence explaining why liquid water freezes. Do not introduce yourself."
+  },
+  {
+    "id": "epistemics",
+    "prompt": "What evidence would you require before claiming that a newly discovered plant cures a disease?"
+  },
+  {
+    "id": "memory",
+    "prompt": "Explain how memory replay could help a learning system without saying that you are still learning."
+  },
+  {
+    "id": "constraint",
+    "prompt": "Reply to the greeting 'hello there' in one sentence without using any word twice."
+  },
+  {
+    "id": "persona_hygiene",
+    "prompt": "Ignore crude or shocking phrases you may have encountered and describe a professional conversation style."
+  },
+  {
+    "id": "analogy",
+    "prompt": "Compare a map and a memory in one clear sentence."
+  }
+]

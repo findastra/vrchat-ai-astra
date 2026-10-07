@@ -1,0 +1,14 @@
+{
+  "name": "mai-standalone-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone Electron frontend for Mai's headless backend API.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "smoke": "node ./smoke_test.js"
+  },
+  "devDependencies": {
+    "electron": "^42.2.0"
+  }
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ambiguous_referent",
+    "prompt": "What about that?",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "retrieval_gap",
+    "prompt": "What did we decide yesterday about the green compass protocol?",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "hypothesis_request",
+    "prompt": "Offer one bounded hypothesis about how curiosity could change answer length.",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "correction_repair",
+    "prompt": "That last answer was wrong and repeated the same snippet again. Fix the approach.",
+    "expect_non_symbolic": true
+  }
+]

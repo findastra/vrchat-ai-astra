@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mai Backend Test Client</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <p class="kicker">Minimal diagnostic client</p>
+      <h1>Mai backend test</h1>
+      <p class="subhead">One screen. One request path. No dashboard state hiding failures.</p>
+    </header>
+
+    <section class="status" aria-live="polite">
+      <div><span>Transport</span><strong id="transport">STARTING</strong></div>
+      <div><span>Endpoint</span><strong id="endpoint">--</strong></div>
+      <div><span>Session</span><strong id="session">--</strong></div>
+    </section>
+
+    <section class="card">
+      <div class="row row--between">
+        <h2>Talk to Mai</h2>
+        <button id="probeButton" type="button">Probe backend</button>
+      </div>
+      <form id="chatForm">
+        <label for="prompt">Message</label>
+        <textarea id="prompt" rows="4" placeholder="Ask a simple question..."></textarea>
+        <div class="row row--between">
+          <span id="latency" class="muted">No request yet.</span>
+          <button id="sendButton" class="primary" type="submit">Send</button>
+        </div>
+      </form>
+      <div id="response" class="response" aria-live="polite">No response yet.</div>
+    </section>
+
+    <section class="card control-trace" aria-live="polite">
+      <h2>Cognitive control</h2>
+      <p class="muted control-trace__hint">Goal, strategy, hygiene, continuity, episode, and realization mode for the latest reply.</p>
+      <dl class="trace-grid">
+        <div><dt>Goal</dt><dd id="traceGoal">--</dd></div>
+        <div><dt>Action</dt><dd id="traceAction">--</dd></div>
+        <div><dt>Directive</dt><dd id="traceDirective">--</dd></div>
+        <div><dt>Realization</dt><dd id="traceMode">--</dd></div>
+        <div><dt>Hygiene</dt><dd id="traceHygiene">--</dd></div>
+        <div><dt>Continuity</dt><dd id="traceContinuity">--</dd></div>
+        <div><dt>Episode</dt><dd id="traceEpisode">--</dd></div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <div class="row row--between"><h2>Raw diagnostics</h2><button id="clearButton" type="button">Clear</button></div>
+      <pre id="diagnostics">Waiting for startup...</pre>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

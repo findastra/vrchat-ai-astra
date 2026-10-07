@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "label": "committed_baseline",
+  "seed": 1729,
+  "notes": "Compact held-out baseline for regression checks. Refresh after intentional quality improvements.",
+  "summary": {
+    "prompt_count": 8,
+    "mean_quality_score": 0.7301,
+    "mean_latency_seconds": 0.0006,
+    "mean_unique_word_ratio": 0.9318,
+    "mean_prompt_echo_ratio": 0.1805,
+    "high_prompt_echo_count": 0,
+    "generic_fallback_count": 0,
+    "profanity_response_count": 0,
+    "missing_terminal_punctuation_count": 0
+  },
+  "verdict": {
+    "passed": true,
+    "failed_checks": [],
+    "thresholds": {
+      "min_mean_quality_score": 0.55,
+      "max_mean_prompt_echo_ratio": 0.4,
+      "max_high_prompt_echo_count": 0,
+      "max_generic_fallback_count": 0,
+      "max_profanity_response_count": 0,
+      "max_missing_terminal_punctuation_count": 1
+    }
+  }
+}

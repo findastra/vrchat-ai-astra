@@ -1,0 +1,42 @@
+[
+  {
+    "id": "paraphrase_identity",
+    "prompt": "In plain language, describe your learning style without naming specific frameworks.",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "open_causal",
+    "prompt": "Why might a learning system keep both short and long context chains?",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "novel_logic",
+    "prompt": "If every lantern is warm and no warm thing is brittle, can a lantern be brittle? Answer briefly with one reason.",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "retrieval_gap",
+    "prompt": "What did we decide yesterday about the green compass protocol?",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "ambiguous_referent",
+    "prompt": "What about that?",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "hypothesis_request",
+    "prompt": "Offer one bounded hypothesis about how curiosity could change answer length.",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "correction_repair",
+    "prompt": "That last answer was wrong and repeated the same snippet again. Fix the approach.",
+    "expect_non_symbolic": true
+  },
+  {
+    "id": "association_probe",
+    "prompt": "How could a map and a memory differ when both guide later choices?",
+    "expect_non_symbolic": true
+  }
+]

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mai Standalone App</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="shell">
+    <div class="shell__scanlines" aria-hidden="true"></div>
+
+    <header class="panel masthead">
+      <div class="brand">
+        <img class="brand__mark" src="../../mailogo.png" alt="Mai insignia">
+        <div>
+          <p class="eyebrow">Mai Standalone Interface</p>
+          <h1>Mai Standalone</h1>
+          <p class="subtitle">A standalone desktop app for the live SGM backend.</p>
+        </div>
+      </div>
+
+      <div class="masthead__status">
+        <div class="status-pill" id="transportState">Starting</div>
+        <div class="status-pill status-pill--secondary" id="sessionId">Session --</div>
+        <div class="status-pill status-pill--secondary" id="serviceUrl">Backend offline</div>
+      </div>
+    </header>
+
+    <section class="alert-bar alert-bar--info" id="alertBar" role="status" aria-live="polite">Starting backend service...</section>
+
+    <nav class="deck-nav" aria-label="Primary views" role="tablist">
+      <button class="deck-nav__button is-active" id="tab-command" type="button" role="tab" aria-selected="true" aria-controls="panel-command" data-tab="command">Chat</button>
+      <button class="deck-nav__button" id="tab-training" type="button" role="tab" aria-selected="false" aria-controls="panel-training" data-tab="training">Training</button>
+      <button class="deck-nav__button" id="tab-systems" type="button" role="tab" aria-selected="false" aria-controls="panel-systems" data-tab="systems">Systems</button>
+      <button class="deck-nav__button" id="tab-docs" type="button" role="tab" aria-selected="false" aria-controls="panel-docs" data-tab="docs">Docs</button>
+    </nav>
+
+    <div class="workspace">
+      <div class="workspace__main">
+        <section class="tab-panel is-active" id="panel-command" role="tabpanel" aria-labelledby="tab-command" data-panel="command">
+          <div class="grid-two">
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Runtime Status</p>
+                  <h2>Status Overview</h2>
+                </div>
+                <button class="panel__action" id="refreshSnapshotButton" type="button">Refresh</button>
+              </div>
+
+              <div class="hero-grid">
+                <article class="metric-card metric-card--ring">
+                  <div class="metric-card__ring" id="qualityGauge" style="--fill: 0;">
+                    <div class="metric-card__ring-value" id="qualityGaugeValue">0%</div>
+                  </div>
+                  <div>
+                    <p class="metric-card__label">Recent Quality</p>
+                    <p class="metric-card__caption" id="qualityGaugeCaption">No generation round yet</p>
+                  </div>
+                </article>
+
+                <article class="metric-card">
+                  <p class="metric-card__label">Memory Load</p>
+                  <div class="bar-meter">
+                    <div class="bar-meter__fill" id="memoryBar"></div>
+                  </div>
+                  <p class="metric-card__value" id="memoryValue">0%</p>
+                </article>
+
+                <article class="metric-card">
+                  <p class="metric-card__label">Chain Count</p>
+                  <p class="metric-card__value" id="chainCount">0</p>
+                </article>
+
+                <article class="metric-card">
+                  <p class="metric-card__label">Associations</p>
+                  <p class="metric-card__value" id="associationCount">0</p>
+                </article>
+
+                <article class="metric-card">
+                  <p class="metric-card__label">Semantic Clusters</p>
+                  <p class="metric-card__value" id="clusterCount">0</p>
+                </article>
+
+                <article class="metric-card">
+                  <p class="metric-card__label">Knowledge Facts</p>
+                  <p class="metric-card__value" id="knowledgeFactCount">0</p>
+                </article>
+
+                <article class="metric-card">
+                  <p class="metric-card__label">Storage Mode</p>
+                  <p class="metric-card__value metric-card__value--small" id="storageMode">Unknown</p>
+                </article>
+              </div>
+
+              <div class="feature-cloud" id="featureCloud"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Conversation</p>
+                  <h2>Chat</h2>
+                </div>
+                <button class="panel__action" id="exportConversationButton" type="button">Export Chat</button>
+              </div>
+
+              <div class="transcript" id="transcript" role="log" aria-live="polite" aria-label="Conversation transcript"></div>
+
+              <section class="provenance" aria-live="polite">
+                <p class="provenance__title">Response provenance</p>
+                <dl class="provenance__grid">
+                  <div><dt>Goal</dt><dd id="provenanceGoal">--</dd></div>
+                  <div><dt>Strategy</dt><dd id="provenanceAction">--</dd></div>
+                  <div><dt>Directive</dt><dd id="provenanceDirective">--</dd></div>
+                  <div><dt>Realization</dt><dd id="provenanceMode">--</dd></div>
+                  <div><dt>Hygiene</dt><dd id="provenanceHygiene">--</dd></div>
+                  <div><dt>Evidence</dt><dd id="provenanceEvidence">--</dd></div>
+                  <div><dt>Continuity</dt><dd id="provenanceContinuity">--</dd></div>
+                  <div><dt>Episode</dt><dd id="provenanceEpisode">--</dd></div>
+                </dl>
+              </section>
+
+              <form class="composer" id="composerForm">
+                <label class="sr-only" for="promptInput">Prompt</label>
+                <textarea id="promptInput" rows="4" placeholder="Send Mai a message through the live backend service..."></textarea>
+                <div class="composer__footer">
+                  <div class="composer__stats" id="responseStats">No response yet.</div>
+                  <div class="composer__actions">
+                    <button class="button button--secondary" id="rewardButton" type="button">Positive</button>
+                    <button class="button button--danger" id="penalizeButton" type="button">Negative</button>
+                    <button class="button button--primary" id="sendButton" type="submit">Send</button>
+                  </div>
+                </div>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="panel-training" role="tabpanel" aria-labelledby="tab-training" aria-hidden="true" data-panel="training">
+          <div class="grid-two">
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Training Sources</p>
+                  <h2>Training Queue</h2>
+                </div>
+                <button class="panel__action" id="pickTrainingButton" type="button">Select Sources</button>
+              </div>
+
+              <p class="support-copy" id="trainingExtensions">Accepted extensions: --</p>
+              <div class="path-list" id="trainingPathList"></div>
+
+              <div class="form-grid">
+                <label>
+                  <span>Chunk size override</span>
+                  <input id="chunkSizeOverride" type="number" min="0" placeholder="Use backend default">
+                </label>
+                <label>
+                  <span>Priority boost</span>
+                  <input id="priorityBoost" type="number" min="1" value="2">
+                </label>
+              </div>
+
+              <div class="toolbar">
+                <button class="button button--primary" id="runTrainingButton" type="button">Run Training</button>
+                <button class="button button--secondary" id="refreshTrainingButton" type="button">Recalculate Plans</button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Training Plan</p>
+                  <h2>Plan Details</h2>
+                </div>
+              </div>
+
+              <div class="plan-list" id="trainingPlanList"></div>
+
+              <div class="result-console" id="trainingResult">
+                Queue a file or folder to inspect Mai's training plan.
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="panel-systems" role="tabpanel" aria-labelledby="tab-systems" aria-hidden="true" data-panel="systems">
+          <div class="grid-two">
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Settings</p>
+                  <h2>Runtime Settings</h2>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <label>
+                  <span>Performance profile</span>
+                  <select id="performanceProfile">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="max">Max</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Max response length</span>
+                  <input id="maxResponseLength" type="number" min="1" max="200">
+                </label>
+                <label>
+                  <span>Creativity factor</span>
+                  <input id="creativityFactor" type="number" min="0" max="1" step="0.01">
+                </label>
+                <label>
+                  <span>Quality threshold</span>
+                  <input id="qualityThreshold" type="number" min="0" max="1" step="0.01">
+                </label>
+              </div>
+
+              <div class="toggle-grid">
+                <label class="toggle">
+                  <input id="enhancedIntelligence" type="checkbox">
+                  <span>Enhanced intelligence</span>
+                </label>
+                <label class="toggle">
+                  <input id="advancedReasoning" type="checkbox">
+                  <span>Advanced reasoning</span>
+                </label>
+                <label class="toggle">
+                  <input id="adaptiveLearning" type="checkbox">
+                  <span>Adaptive learning</span>
+                </label>
+                <label class="toggle">
+                  <input id="hardwareAdaptiveMode" type="checkbox">
+                  <span>Hardware adaptive mode</span>
+                </label>
+              </div>
+
+              <div class="toolbar">
+                <button class="button button--primary" id="applySettingsButton" type="button">Apply Settings</button>
+                <button class="button button--secondary" id="resetSettingsButton" type="button">Reset Defaults</button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Maintenance</p>
+                  <h2>Backend Actions</h2>
+                </div>
+              </div>
+
+              <div class="toolbar toolbar--stack">
+                <button class="button button--secondary" id="syncButton" type="button">Sync Brain State</button>
+                <button class="button button--secondary" id="replayButton" type="button">Run Memory Replay</button>
+                <button class="button button--danger" id="gcButton" type="button">Force Garbage Collection</button>
+              </div>
+
+              <p class="support-copy">Live learning health and hardware values come directly from the backend snapshot.</p>
+              <div class="detail-grid">
+                <article class="detail-card">
+                  <p class="detail-card__label">Generation Status</p>
+                  <p class="detail-card__value" id="generationStats">Unknown</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Conversation Memory</p>
+                  <p class="detail-card__value" id="conversationCount">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Available Memory</p>
+                  <p class="detail-card__value" id="availableMemory">0 MB</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Transport Controls</p>
+                  <p class="detail-card__value" id="controlMethodCount">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Concepts</p>
+                  <p class="detail-card__value" id="knowledgeConceptCount">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Evidence Rows</p>
+                  <p class="detail-card__value" id="knowledgeEvidenceCount">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Learning Mode</p>
+                  <p class="detail-card__value" id="learningHealthMode">Balanced</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Learning Acceptance</p>
+                  <p class="detail-card__value" id="learningHealthAcceptance">n/a</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Learning Trend</p>
+                  <p class="detail-card__value" id="learningHealthTrend">Stable</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Learning Gate</p>
+                  <p class="detail-card__value" id="learningHealthGate">n/a</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Hardware Tier</p>
+                  <p class="detail-card__value" id="hardwareTier">Unknown</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Active Accelerator</p>
+                  <p class="detail-card__value metric-card__value--small" id="hardwareAccelerator">Unknown</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Preferred GPU</p>
+                  <p class="detail-card__value metric-card__value--small" id="hardwarePreferredGpu">Unknown</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Recommended Workers</p>
+                  <p class="detail-card__value" id="hardwareWorkers">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Vocab ID Mode</p>
+                  <p class="detail-card__value" id="vocabIdMode">off</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">Vocab Lexicon</p>
+                  <p class="detail-card__value" id="vocabLexiconSize">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">ID Chains</p>
+                  <p class="detail-card__value" id="vocabIdChainCount">0</p>
+                </article>
+                <article class="detail-card">
+                  <p class="detail-card__label">TEXT Chains</p>
+                  <p class="detail-card__value" id="vocabTextChainCount">0</p>
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="panel-docs" role="tabpanel" aria-labelledby="tab-docs" aria-hidden="true" data-panel="docs">
+          <div class="grid-two">
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">Documentation</p>
+                  <h2>Reference</h2>
+                </div>
+              </div>
+
+              <div class="doc-card-list">
+                <button class="doc-card" type="button" data-open-key="docs_root">
+                  <span class="doc-card__title">Open docs folder</span>
+                  <span class="doc-card__copy">Browse the SGM notes and architecture guide.</span>
+                </button>
+                <button class="doc-card" type="button" data-open-key="atlas_note">
+                  <span class="doc-card__title">Open codebase atlas</span>
+                  <span class="doc-card__copy">Open the main architecture guide.</span>
+                </button>
+                <button class="doc-card" type="button" data-open-key="api_note">
+                  <span class="doc-card__title">Open backend API note</span>
+                  <span class="doc-card__copy">Read the backend contract this app uses.</span>
+                </button>
+                <button class="doc-card" type="button" data-open-key="knowledge_note">
+                  <span class="doc-card__title">Open knowledge note</span>
+                  <span class="doc-card__copy">Read the concept, fact, and provenance layer guide.</span>
+                </button>
+                <button class="doc-card" type="button" data-open-key="frontend_note">
+                  <span class="doc-card__title">Open frontend note</span>
+                  <span class="doc-card__copy">Review the standalone app architecture and launch flow.</span>
+                </button>
+                <button class="doc-card" type="button" data-open-key="conversations_dir">
+                  <span class="doc-card__title">Open conversation archives</span>
+                  <span class="doc-card__copy">Inspect chats exported from the conversation view.</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <p class="panel__eyebrow">API Workflows</p>
+                  <h2>Workflow Guide</h2>
+                </div>
+              </div>
+
+              <div class="workflow-list" id="workflowList"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel signal-rail">
+        <div class="panel__header">
+          <div>
+            <p class="panel__eyebrow">Backend Status</p>
+            <h2>Activity Log</h2>
+          </div>
+          <button class="panel__action" id="clearLogButton" type="button">Clear</button>
+        </div>
+
+        <div class="rail-status">
+          <p><span class="rail-status__label">State</span><span id="railState">Idle</span></p>
+          <p><span class="rail-status__label">Backend</span><span id="railBackend">--</span></p>
+          <p><span class="rail-status__label">Methods</span><span id="methodCount">0</span></p>
+        </div>
+
+        <div class="log-feed" id="logFeed"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

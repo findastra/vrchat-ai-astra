@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual envs
+venv/
+.venv/
+
+# Node/Electron
+node_modules/
+standalone_frontend/node_modules/
+
+# Runtime/state files
+*.db
+*.db-shm
+*.db-wal
+*.invalid.*
+mai_*.json.*.tmp
+
+# App data folders
+.standalone_user_data/
+conversations/
+brain_backup_*/
+brain_data/
+
+# Local diagnostics/temp
+_*.py
+evaluation_results/
+
+# Learned memory / brain state (never commit; each install learns its own)
+*_phoenix_model.json
+*_phoenix_vocab.json
+*_semantic_clusters.json
+*_attention_weights.json
+*_context_scores.json
+*.hsb
+
+# Dev output (UI audit screenshots, logs)
+output/

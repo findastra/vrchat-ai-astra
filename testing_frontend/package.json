@@ -1,0 +1,7 @@
+{
+  "name": "mai-testing-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Electron client for testing the Mai backend transport.",
+  "main": "main.js"
+}

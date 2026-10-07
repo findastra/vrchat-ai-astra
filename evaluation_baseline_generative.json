@@ -1,0 +1,38 @@
+{
+  "schema_version": 3,
+  "label": "committed_generative_baseline",
+  "seed": 1729,
+  "suite": "generative",
+  "notes": "Held-out generative suite baseline. Refresh after intentional open-domain quality improvements. Tracks symbolic leakage and cognitive presence.",
+  "summary": {
+    "prompt_count": 8,
+    "mean_quality_score": 0.6988,
+    "mean_latency_seconds": 6.7472,
+    "mean_unique_word_ratio": 0.9326,
+    "mean_prompt_echo_ratio": 0.1016,
+    "high_prompt_echo_count": 0,
+    "generic_fallback_count": 0,
+    "profanity_response_count": 0,
+    "missing_terminal_punctuation_count": 0,
+    "symbolic_hit_count": 0,
+    "symbolic_hit_rate": 0.0,
+    "cognitive_action_presence_count": 8,
+    "cognitive_action_presence_rate": 1.0,
+    "unexpected_symbolic_count": 0
+  },
+  "verdict": {
+    "passed": true,
+    "failed_checks": [],
+    "thresholds": {
+      "min_mean_quality_score": 0.3,
+      "max_mean_prompt_echo_ratio": 0.5,
+      "max_high_prompt_echo_count": 1,
+      "max_generic_fallback_count": 0,
+      "max_profanity_response_count": 0,
+      "max_missing_terminal_punctuation_count": 2,
+      "max_symbolic_hit_rate": 0.25,
+      "min_cognitive_action_presence_rate": 0.5,
+      "max_unexpected_symbolic_count": 0
+    }
+  }
+}

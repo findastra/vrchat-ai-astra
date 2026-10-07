@@ -1,0 +1,10 @@
+﻿PySide6
+psutil
+pyvista
+pyvistaqt
+networkx
+pandas
+numpy
+# Optional GPU acceleration packages (will be installed if suitable GPU detected):
+# pyopencl
+# pycuda
