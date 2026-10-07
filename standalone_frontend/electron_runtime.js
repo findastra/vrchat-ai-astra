@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 const APP_ROOT = __dirname;
-const MAI_ROOT = path.resolve(APP_ROOT, '..');
-const WORKSPACE_ROOT = path.resolve(MAI_ROOT, '..');
+const AI_ASTRA_ROOT = path.resolve(APP_ROOT, '..');
+const WORKSPACE_ROOT = path.resolve(AI_ASTRA_ROOT, '..');
 
 function candidatePaths() {
   const candidates = [];
-  if (process.env.MAI_FRONTEND_ELECTRON) {
-    candidates.push(process.env.MAI_FRONTEND_ELECTRON);
+  if (process.env.AI_ASTRA_FRONTEND_ELECTRON) {
+    candidates.push(process.env.AI_ASTRA_FRONTEND_ELECTRON);
   }
   candidates.push(path.join(APP_ROOT, 'node_modules', 'electron', 'dist', 'electron.exe'));
   candidates.push(path.join(WORKSPACE_ROOT, 'maionline', 'node_modules', 'electron', 'dist', 'electron.exe'));
@@ -27,7 +27,7 @@ function resolveElectronExecutable() {
 
 module.exports = {
   APP_ROOT,
-  MAI_ROOT,
+  AI_ASTRA_ROOT,
   WORKSPACE_ROOT,
   candidatePaths,
   resolveElectronExecutable,

@@ -1,4 +1,4 @@
-"""Sparse, persistent cognitive control for Mai.
+"""Sparse, persistent cognitive control for AI Astra.
 
 This module intentionally uses ordinary scalars, dictionaries, relations, and
 SQLite.  It does not generate language itself.  It appraises a conversation
@@ -391,7 +391,7 @@ class NornCognitiveCore:
         return {
             'answer_usefully': 'Produce an answer that improves the user\'s situation.',
             'resolve_uncertainty': 'Reduce uncertainty before making a strong claim.',
-            'restore_alignment': 'Repair a mismatch between the user\'s intent and Mai\'s behavior.',
+            'restore_alignment': 'Repair a mismatch between the user\'s intent and AI Astra\'s behavior.',
             'continue_shared_context': 'Use relevant shared experience without pretending to remember more than is stored.',
             'discover_relation': 'Find a useful relation among the active concepts.',
             'create_novel_idea': 'Construct a novel but testable connection.',

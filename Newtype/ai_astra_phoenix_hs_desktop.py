@@ -1,5 +1,5 @@
 """
-Mai Phoenix Desktop - High-Speed Edition
+AI Astra Phoenix Desktop - High-Speed Edition
 Integrated with proprietary HSB storage engine for maximum performance
 """
 
@@ -23,13 +23,13 @@ from hsb_format import read_hsb_brain, create_hsb_brain_from_data
 import sqlite3
 
 # File constants - support both SQLite and HSB formats
-DB_FILE = 'mai_phoenix_brain.db'
-HSB_FILE = os.path.join('brain_data', 'mai_phoenix_brain.hsb')
-NN_MODEL_FILE = 'mai_phoenix_model.json'
-VOCAB_FILE = 'mai_phoenix_vocab.json'
-ATTENTION_FILE = 'mai_attention_weights.json'
-CONTEXT_SCORES_FILE = 'mai_context_scores.json'
-SEMANTIC_CLUSTERS_FILE = 'mai_semantic_clusters.json'
+DB_FILE = 'ai_astra_phoenix_brain.db'
+HSB_FILE = os.path.join('brain_data', 'ai_astra_phoenix_brain.hsb')
+NN_MODEL_FILE = 'ai_astra_phoenix_model.json'
+VOCAB_FILE = 'ai_astra_phoenix_vocab.json'
+ATTENTION_FILE = 'ai_astra_attention_weights.json'
+CONTEXT_SCORES_FILE = 'ai_astra_context_scores.json'
+SEMANTIC_CLUSTERS_FILE = 'ai_astra_semantic_clusters.json'
 
 MAX_CONTEXT_SIZE = 8
 CONTEXT_LEVELS = [8, 6, 4, 2]
@@ -634,17 +634,17 @@ class HighSpeedHybridBrain:
         
         return f"Generation Success Rate: {success_rate:.2%} ({total_attempts - self.generation_failures}/{total_attempts})"
 
-class MaiPhoenixDesktop(QMainWindow):
-    """Main Mai Phoenix Desktop application with high-speed storage - Complete Feature Set"""
+class AIAstraPhoenixDesktop(QMainWindow):
+    """Main AI Astra Phoenix Desktop application with high-speed storage - Complete Feature Set"""
     
     def __init__(self):
         super().__init__()
-        print("Initializing Mai Phoenix Desktop - High-Speed Edition...")
+        print("Initializing AI Astra Phoenix Desktop - High-Speed Edition...")
         self.brain = HighSpeedHybridBrain()
         self.file_training_worker = None
         
         print("Setting up UI...")
-        self.setWindowTitle("Mai Phoenix Desktop - High-Speed Edition v2.0")
+        self.setWindowTitle("AI Astra Phoenix Desktop - High-Speed Edition v2.0")
         self.setGeometry(100, 100, 1200, 800)
         
         # Apply professional styling
@@ -774,7 +774,7 @@ class MaiPhoenixDesktop(QMainWindow):
         # Setup menu
         self.setup_menu()
         
-        print("Mai Phoenix Desktop - High-Speed Edition v2.0 is ready!")
+        print("AI Astra Phoenix Desktop - High-Speed Edition v2.0 is ready!")
         
     def create_conversation_tab(self):
         """Create the main conversation tab"""
@@ -797,7 +797,7 @@ class MaiPhoenixDesktop(QMainWindow):
         top_layout.setContentsMargins(15, 5, 15, 5)
         top_layout.setSpacing(15)
         
-        self.status_label = QLabel("Mai Phoenix - High-Speed Edition v2.0")
+        self.status_label = QLabel("AI Astra Phoenix - High-Speed Edition v2.0")
         self.status_label.setStyleSheet("color: white; font-weight: bold; font-size: 13px;")
         
         self.quality_label = QLabel("Quality: Initializing...")
@@ -832,7 +832,7 @@ class MaiPhoenixDesktop(QMainWindow):
         # Welcome message
         welcome_message = '''
         <div style="font-family: 'Tahoma', Arial, sans-serif; color: #333333;">
-            <h2 style="color: #2C3E50; margin-bottom: 15px;">Mai Phoenix - High-Speed AI Brain</h2>
+            <h2 style="color: #2C3E50; margin-bottom: 15px;">AI Astra Phoenix - High-Speed AI Brain</h2>
             
             <div style="background: #E8F4FD; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3498DB;">
                 <h3 style="color: #2980B9; margin-top: 0;">High-Speed Features:</h3>
@@ -882,7 +882,7 @@ class MaiPhoenixDesktop(QMainWindow):
         # File teaching group
         file_group = QGroupBox("High-Speed File Teaching")
         file_layout = QVBoxLayout(file_group)
-        file_layout.addWidget(QLabel("<p>Select .txt files to teach Mai statistical patterns.<br/><b>HIGH-SPEED:</b> Optimized for large files with batch processing!</p>"))
+        file_layout.addWidget(QLabel("<p>Select .txt files to teach AI Astra statistical patterns.<br/><b>HIGH-SPEED:</b> Optimized for large files with batch processing!</p>"))
         
         select_layout = QHBoxLayout()
         self.file_input_label = QLabel("No files selected.")
@@ -930,13 +930,13 @@ class MaiPhoenixDesktop(QMainWindow):
         convo_layout = QVBoxLayout(convo_group)
         
         self.teaching_input = QLineEdit()
-        self.teaching_input.setPlaceholderText("Enter text to teach Mai...")
+        self.teaching_input.setPlaceholderText("Enter text to teach AI Astra...")
         self.teaching_input.returnPressed.connect(self.teach_from_text)
         
         teach_button = QPushButton("Teach This Text")
         teach_button.clicked.connect(self.teach_from_text)
         
-        convo_layout.addWidget(QLabel("Teach Mai from conversation:"))
+        convo_layout.addWidget(QLabel("Teach AI Astra from conversation:"))
         convo_layout.addWidget(self.teaching_input)
         convo_layout.addWidget(teach_button)
         
@@ -950,7 +950,7 @@ class MaiPhoenixDesktop(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         
-        layout.addWidget(QLabel("<h2>Mai Phoenix High-Speed Brain Analysis</h2>"))
+        layout.addWidget(QLabel("<h2>AI Astra Phoenix High-Speed Brain Analysis</h2>"))
         
         # Brain controls
         controls_layout = QHBoxLayout()
@@ -1003,7 +1003,7 @@ class MaiPhoenixDesktop(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         
-        layout.addWidget(QLabel("<h2>Mai Phoenix High-Speed Settings</h2>"))
+        layout.addWidget(QLabel("<h2>AI Astra Phoenix High-Speed Settings</h2>"))
         
         # Performance settings
         perf_group = QGroupBox("Performance Settings")
@@ -1096,7 +1096,7 @@ class MaiPhoenixDesktop(QMainWindow):
             response = self.brain.generate_response(user_input)
             if response is None:
                 response = ""
-            self.chat_window.append(f"<b>Mai:</b> {response}")
+            self.chat_window.append(f"<b>AI Astra:</b> {response}")
         except Exception as e:
             self.chat_window.append(f"<b>Error:</b> {str(e)}")
             
@@ -1457,11 +1457,11 @@ def main():
     app = QApplication(sys.argv)
     
     # Set application properties
-    app.setApplicationName("Mai Phoenix Desktop - High-Speed Edition")
+    app.setApplicationName("AI Astra Phoenix Desktop - High-Speed Edition")
     app.setApplicationVersion("2.0")
     
     # Create and show main window
-    window = MaiPhoenixDesktop()
+    window = AIAstraPhoenixDesktop()
     window.show()
     
     # Run application

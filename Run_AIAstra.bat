@@ -1,6 +1,6 @@
 @echo off
 setlocal
-title Mai Standalone
+title AI Astra Standalone
 
 rem Safe launcher: this file does not run PowerShell, install packages, or start Newtype.
 set "ROOT=%~dp0"
@@ -21,21 +21,21 @@ if not exist "%ELECTRON%" (
 )
 
 where py >nul 2>&1
-if not errorlevel 1 set "MAI_BACKEND_PYTHON=py"
-if not defined MAI_BACKEND_PYTHON (
+if not errorlevel 1 set "AI_ASTRA_BACKEND_PYTHON=py"
+if not defined AI_ASTRA_BACKEND_PYTHON (
   where python >nul 2>&1
-  if not errorlevel 1 set "MAI_BACKEND_PYTHON=python"
+  if not errorlevel 1 set "AI_ASTRA_BACKEND_PYTHON=python"
 )
-if not defined MAI_BACKEND_PYTHON (
+if not defined AI_ASTRA_BACKEND_PYTHON (
   echo ERROR: Python 3.11 or newer was not found.
   pause
   exit /b 1
 )
 
-set "MAI_ROOT=%ROOT%"
-for %%I in ("%ROOT%..") do set "MAI_WORKSPACE_ROOT=%%~fI"
+set "AI_ASTRA_ROOT=%ROOT%"
+for %%I in ("%ROOT%..") do set "AI_ASTRA_WORKSPACE_ROOT=%%~fI"
 
-echo Starting Mai Standalone without legacy launchers...
+echo Starting AI Astra Standalone without legacy launchers...
 "%ELECTRON%" "%ROOT%standalone_frontend"
 set "EXIT_CODE=%errorlevel%"
 endlocal & exit /b %EXIT_CODE%

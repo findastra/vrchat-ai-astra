@@ -6,7 +6,7 @@ import time
 import urllib.request
 
 
-KNOWLEDGE_SAMPLE_TEXT = 'Mai is a statistical intelligence. Mai is part of the sgm system.'
+KNOWLEDGE_SAMPLE_TEXT = 'AI Astra is a statistical intelligence. AI Astra is part of the sgm system.'
 
 
 def _http_get(url: str) -> dict:
@@ -99,7 +99,7 @@ def run_http_example(port: int, prompt: str) -> dict:
             {
                 'id': 5,
                 'method': 'get_response_plan_preview',
-                'params': {'user_input': 'what is mai?', 'limit': 3},
+                'params': {'user_input': 'what is astra?', 'limit': 3},
             },
         )
         hardware_profile = _http_post(
@@ -190,7 +190,7 @@ def run_stdio_example(prompt: str) -> dict:
         knowledge_snapshot = _read_stdio_json(process)
         _write_stdio_json(
             process,
-            {'id': 13, 'method': 'get_response_plan_preview', 'params': {'user_input': 'what is mai?', 'limit': 3}},
+            {'id': 13, 'method': 'get_response_plan_preview', 'params': {'user_input': 'what is astra?', 'limit': 3}},
         )
         response_plan = _read_stdio_json(process)
         _write_stdio_json(
@@ -239,7 +239,7 @@ def run_stdio_example(prompt: str) -> dict:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Example client for Mai's headless transports.")
+    parser = argparse.ArgumentParser(description="Example client for AI Astra's headless transports.")
     parser.add_argument('--transport', choices=('http', 'stdio'), default='stdio')
     parser.add_argument('--port', type=int, default=8773)
     parser.add_argument('--prompt', default='what is the sgm model?')

@@ -598,13 +598,13 @@ def cmd_serve_http(args) -> int:
     port = int(args.port)
 
     class Handler(BaseHTTPRequestHandler):
-        server_version = "MaiBackendHTTP/1.0"
+        server_version = "AIAstraBackendHTTP/1.0"
         sys_version = ""
 
         def _is_authorized(self) -> bool:
             if not auth_token:
                 return not bool(self.headers.get('Origin'))
-            supplied_token = str(self.headers.get('X-Mai-Token', '') or '')
+            supplied_token = str(self.headers.get('X-AIAstra-Token', '') or '')
             return bool(supplied_token) and hmac.compare_digest(supplied_token, auth_token)
 
         def _require_authorization(self) -> bool:
@@ -711,7 +711,7 @@ def cmd_serve_http(args) -> int:
             print(f"[http] {self.address_string()} - {format % args}")
 
     server = ThreadingHTTPServer((bind_host, port), Handler)
-    print(f"Mai backend HTTP service listening on http://{bind_host}:{port}", flush=True)
+    print(f"AI Astra backend HTTP service listening on http://{bind_host}:{port}", flush=True)
     try:
         server.serve_forever()
         return 0
@@ -722,7 +722,7 @@ def cmd_serve_http(args) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Headless runner for Mai's in-process backend API.",
+        description="Headless runner for AI Astra's in-process backend API.",
     )
     subparsers = parser.add_subparsers(dest='command', required=True)
 
@@ -783,8 +783,8 @@ def build_parser() -> argparse.ArgumentParser:
     http_parser.add_argument('--port', type=int, default=8765, help='Port to bind. Defaults to 8765.')
     http_parser.add_argument(
         '--auth-token',
-        default=os.environ.get('MAI_BACKEND_AUTH_TOKEN', ''),
-        help='Optional shared secret. Defaults to MAI_BACKEND_AUTH_TOKEN.',
+        default=os.environ.get('AI_ASTRA_BACKEND_AUTH_TOKEN', ''),
+        help='Optional shared secret. Defaults to AI_ASTRA_BACKEND_AUTH_TOKEN.',
     )
     http_parser.add_argument(
         '--max-body-bytes',

@@ -7,10 +7,10 @@ const { BackendService } = require('./backend_service');
 const { resolveElectronExecutable } = require('./electron_runtime');
 
 async function runBackendServiceSmoke() {
-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mai-backend-smoke-'));
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'astra-backend-smoke-'));
   const backend = new BackendService({
-    pythonPath: process.env.MAI_BACKEND_PYTHON,
-    workspaceRoot: process.env.MAI_WORKSPACE_ROOT,
+    pythonPath: process.env.AI_ASTRA_BACKEND_PYTHON,
+    workspaceRoot: process.env.AI_ASTRA_WORKSPACE_ROOT,
     stateDir,
   });
 
@@ -26,7 +26,7 @@ async function runBackendServiceSmoke() {
     const batchPayload = await backend.batch([
       { id: 'session', method: 'get_session_info', params: {} },
       { id: 'status', method: 'get_runtime_bootstrap_snapshot', params: {} },
-      { id: 'response', method: 'generate_response', params: { user_input: 'Summarize Mai in one sentence.' } },
+      { id: 'response', method: 'generate_response', params: { user_input: 'Summarize AI Astra in one sentence.' } },
     ]);
 
     if (!health || !health.ok) {
@@ -62,7 +62,7 @@ async function runBackendServiceSmoke() {
 async function runInvalidPythonProbe() {
   const backend = new BackendService({
     pythonPath: 'L:/definitely-missing-python.exe',
-    workspaceRoot: process.env.MAI_WORKSPACE_ROOT || process.cwd(),
+    workspaceRoot: process.env.AI_ASTRA_WORKSPACE_ROOT || process.cwd(),
     startupTimeoutMs: 1500,
     requestTimeoutMs: 300,
   });
@@ -98,7 +98,7 @@ function runChildProcess(command, args, options = {}) {
 }
 
 async function runUiSmoke(scenario = 'full') {
-  const outputPath = path.join(os.tmpdir(), `mai-standalone-smoke-${process.pid}-${Date.now()}.json`);
+  const outputPath = path.join(os.tmpdir(), `astra-standalone-smoke-${process.pid}-${Date.now()}.json`);
   const electronExecutable = resolveElectronExecutable();
   if (!electronExecutable) {
     throw new Error('Could not find an Electron runtime for the standalone frontend smoke test.');
@@ -108,9 +108,9 @@ async function runUiSmoke(scenario = 'full') {
   }
   const childEnv = { ...process.env };
   delete childEnv.ELECTRON_RUN_AS_NODE;
-  childEnv.MAI_FRONTEND_SMOKE = '1';
-  childEnv.MAI_FRONTEND_SMOKE_SCENARIO = scenario;
-  childEnv.MAI_SMOKE_OUTPUT_FILE = outputPath;
+  childEnv.AI_ASTRA_FRONTEND_SMOKE = '1';
+  childEnv.AI_ASTRA_FRONTEND_SMOKE_SCENARIO = scenario;
+  childEnv.AI_ASTRA_SMOKE_OUTPUT_FILE = outputPath;
   const result = await runChildProcess(
     electronExecutable,
     [path.resolve(__dirname), '--smoke-test'],
@@ -143,7 +143,7 @@ async function runUiSmoke(scenario = 'full') {
 }
 
 async function main(mode = (process.argv[2] || 'all')) {
-  const outputPath = process.env.MAI_SMOKE_OUTPUT_FILE || '';
+  const outputPath = process.env.AI_ASTRA_SMOKE_OUTPUT_FILE || '';
 
   if (mode === 'backend') {
     const payload = await runBackendServiceSmoke();

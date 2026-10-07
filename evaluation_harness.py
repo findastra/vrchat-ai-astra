@@ -1,4 +1,4 @@
-"""Deterministic, non-learning evaluation for Mai's current persisted brain."""
+"""Deterministic, non-learning evaluation for AI Astra's current persisted brain."""
 
 from __future__ import annotations
 
@@ -443,13 +443,13 @@ def evaluate(
 ) -> dict[str, Any]:
     try:
         from . import backend_runtime
-        from .backend_api import MaiBackendAPI
+        from .backend_api import AIAstraBackendAPI
     except ImportError:
         import backend_runtime
-        from backend_api import MaiBackendAPI
+        from backend_api import AIAstraBackendAPI
 
     brain = backend_runtime.HybridBrain(backend_runtime.DB_FILE, is_clone=True, use_hsb_backend=False)
-    api = object.__new__(MaiBackendAPI)
+    api = object.__new__(AIAstraBackendAPI)
     api.brain = brain
     api.settings_manager = backend_runtime.settings_manager
     api.memory_manager = backend_runtime.memory_manager

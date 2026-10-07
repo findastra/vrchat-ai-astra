@@ -1,12 +1,12 @@
-# Mai: a framework-free statistical AI
+# AI Astra: a framework-free statistical AI
 
-Mai aims to be a **lifelike, coherent alternative** to GPT-style pretrained datacenter models: not a fancy autocomplete over frozen internet text, but a mind that keeps living memory, appraises situations, chooses goals, and learns from outcomes. It is built from persistent n-gram statistics, word associations, semantic clustering, symbolic reasoning, graph reasoning, analog attention, adaptive memory, and a sparse Norn-style cognitive controller. The core runtime does **not** import PyTorch, TensorFlow, Keras, or JAX. An optional NumPy MLP is lazy and excluded from predictions until it has received real training; random weights are never blended into answers. Optional CUDA/OpenCL support accelerates bulk pattern processing and is not required for response generation.
+AI Astra aims to be a **lifelike, coherent alternative** to GPT-style pretrained datacenter models: not a fancy autocomplete over frozen internet text, but a mind that keeps living memory, appraises situations, chooses goals, and learns from outcomes. It is built from persistent n-gram statistics, word associations, semantic clustering, symbolic reasoning, graph reasoning, analog attention, adaptive memory, and a sparse Norn-style cognitive controller. The core runtime does **not** import PyTorch, TensorFlow, Keras, or JAX. An optional NumPy MLP is lazy and excluded from predictions until it has received real training; random weights are never blended into answers. Optional CUDA/OpenCL support accelerates bulk pattern processing and is not required for response generation.
 
 This is still a research prototype. The useful engineering direction remains measurable online learning in service of that identity: every response should be attributable to stored evidence, steered by an explicit goal/strategy when needed, evaluated against repeatable prompts, and accepted into durable memory only when it stays clean and does not regress held-out behavior.
 
 ## Run it
 
-On Windows, double-click `Run_Mai.bat`. The safety-hardened launcher only validates the existing Python and Electron runtimes and starts the Electron interface. It does not run PowerShell, install packages, or invoke the disabled legacy updater.
+On Windows, double-click `Run_AIAstra.bat`. The safety-hardened launcher only validates the existing Python and Electron runtimes and starts the Electron interface. It does not run PowerShell, install packages, or invoke the disabled legacy updater.
 
 For a clean setup:
 
@@ -16,27 +16,27 @@ py -3.11 -m venv .venv
 cd standalone_frontend
 npm ci
 cd ..
-Run_Mai.bat
+Run_AIAstra.bat
 ```
 
-If the full interface looks wrong, launch `Launch_Mai_Test.cmd`. It opens a deliberately small diagnostic client with backend status, one prompt, one response, cognitive-control fields (goal, action, directive, hygiene, realization mode, continuity, episode), and raw request details. By default it uses a temporary state directory so diagnostic messages do not alter the trained brain; set `MAI_TEST_USE_LIVE_STATE=1` before launching when you explicitly want to test the live state.
+If the full interface looks wrong, launch `Launch_AIAstra_Test.cmd`. It opens a deliberately small diagnostic client with backend status, one prompt, one response, cognitive-control fields (goal, action, directive, hygiene, realization mode, continuity, episode), and raw request details. By default it uses a temporary state directory so diagnostic messages do not alter the trained brain; set `AI_ASTRA_TEST_USE_LIVE_STATE=1` before launching when you explicitly want to test the live state.
 
 Headless commands run from the directory *above* `maimain`:
 
 ```powershell
 py -3 -m maimain.headless_api status
-py -3 -m maimain.headless_api generate "What have you learned about Mai?"
+py -3 -m maimain.headless_api generate "What have you learned about AI Astra?"
 py -3 -m maimain.headless_api train "D:\path\to\training"
 py -3 -m maimain.headless_api serve-http --port 8765
 ```
 
 Training coalesces repeated observations into large sorted upserts, accumulates evidence instead of replacing it, and fingerprints completed files in `training_history`. Re-running the same corpus skips it unless its normalized content changes.
 
-The Electron client gives each backend process a random session secret. Manual loopback HTTP sessions remain available without a secret for command-line clients, but browser-origin requests are rejected. Binding to a non-loopback interface requires `--auth-token` or `MAI_BACKEND_AUTH_TOKEN`.
+The Electron client gives each backend process a random session secret. Manual loopback HTTP sessions remain available without a secret for command-line clients, but browser-origin requests are rejected. Binding to a non-loopback interface requires `--auth-token` or `AI_ASTRA_BACKEND_AUTH_TOKEN`.
 
 ## Verify changes safely
 
-The runtime stores learned state beside the source code (`mai_phoenix_brain.db` and `mai_*.json`). Set `MAI_STATE_DIR` to keep state elsewhere. Desktop smoke tests automatically use and remove a temporary state directory, so they never train the production brain.
+The runtime stores learned state beside the source code (`ai_astra_phoenix_brain.db` and `ai_astra_*.json`). Set `AI_ASTRA_STATE_DIR` to keep state elsewhere. Desktop smoke tests automatically use and remove a temporary state directory, so they never train the production brain.
 
 ```powershell
 py -3 -m unittest discover -s tests -v
@@ -83,7 +83,7 @@ The cognitive core stores scalar state, goals, action values, relations, and a c
 
 ### Compact vocab-ID storage
 
-Repeated TEXT n-gram contexts inflate SQLite. Mai now supports an optional integer lexicon + `dynamic_word_chain_ids` table:
+Repeated TEXT n-gram contexts inflate SQLite. AI Astra now supports an optional integer lexicon + `dynamic_word_chain_ids` table:
 
 - Setting `vocab_id_storage_mode`: `off` (default), `dual` (write TEXT + IDs, prefer ID reads), or `ids` (ID writes only; for fresh brains after migration).
 - Changing the mode requires a backend restart.
@@ -100,7 +100,7 @@ The Norn cognitive core now also **reads** persisted `cognitive_goals` progress/
 
 Multi-turn coherence uses two light mechanisms:
 
-- **Episode recall** — before each appraisal, Mai scores recent `conversation_memory` turns by lexical overlap, recency, and quality. A strong match raises `memory_salience` and is attached to the cognitive trace as `episode_memory`. When the selected action is `recall_episode`, generation can preempt with the stored user/bot excerpt (labeled as memory, not invention) instead of a scaffolded miss.
+- **Episode recall** — before each appraisal, AI Astra scores recent `conversation_memory` turns by lexical overlap, recency, and quality. A strong match raises `memory_salience` and is attached to the cognitive trace as `episode_memory`. When the selected action is `recall_episode`, generation can preempt with the stored user/bot excerpt (labeled as memory, not invention) instead of a scaffolded miss.
 - **Goal continuity** — after a turn completes, an unfinished prior goal (progress below ~0.78) gets a continuity bias on the next appraisal unless a correction, social, or creative interrupt arrives. The trace exposes `goal_continuity` and a reason string when that bias wins.
 
 Both fields appear in the Electron provenance panel and the diagnostic test client.
@@ -108,4 +108,4 @@ Both fields appear in the Electron provenance panel and the diagnostic test clie
 ### Deferred follow-on work
 
 - Finish large-brain vocab-ID migration in controlled batches, then optionally switch `vocab_id_storage_mode` to `ids` and drop redundant TEXT chain pages once verified.
-- Keep new work on the headless/Electron path; avoid growing the legacy `mai_phoenix_desktop.py` monolith.
+- Keep new work on the headless/Electron path; avoid growing the legacy `ai_astra_phoenix_desktop.py` monolith.

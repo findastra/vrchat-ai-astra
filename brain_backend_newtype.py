@@ -4,7 +4,7 @@ Import from main app: set HybridBrain to use this backend for a faster, single-f
 
 Usage (once Main is refactored to use a backend):
   from brain_backend_newtype import NewtypeBrainBackend
-  backend = NewtypeBrainBackend(base_path=".", hsb_file="mai_phoenix_brain.hsb")
+  backend = NewtypeBrainBackend(base_path=".", hsb_file="ai_astra_phoenix_brain.hsb")
   # Then pass backend to HybridBrain instead of raw SQLite.
 """
 
@@ -36,7 +36,7 @@ class NewtypeBrainBackend:
 
     def __init__(self, base_path: str = ".", hsb_file: str = None, use_hsb_persistence: bool = True):
         self.base_path = os.path.abspath(base_path or ".")
-        self.hsb_file = hsb_file or os.path.join(self.base_path, "mai_phoenix_brain.hsb")
+        self.hsb_file = hsb_file or os.path.join(self.base_path, "ai_astra_phoenix_brain.hsb")
         self.use_hsb_persistence = use_hsb_persistence
         self.engine = HighSpeedStorageEngine(self.base_path)
         self._word_associations_cache = None  # built on demand for coherence scoring
@@ -316,9 +316,9 @@ class NewtypeBrainBackend:
 
 # Example: how Main would switch backends (after refactor)
 #
-# In mai_phoenix_desktop.py, HybridBrain.__init__ could do:
+# In ai_astra_phoenix_desktop.py, HybridBrain.__init__ could do:
 #
-#   use_newtype = os.environ.get("MAI_USE_HSB", "").lower() in ("1", "true", "yes")
+#   use_newtype = os.environ.get("AI_ASTRA_USE_HSB", "").lower() in ("1", "true", "yes")
 #   if use_newtype:
 #       from brain_backend_newtype import NewtypeBrainBackend
 #       self._storage = NewtypeBrainBackend(base_path=".", hsb_file=DB_FILE.replace(".db", ".hsb"))

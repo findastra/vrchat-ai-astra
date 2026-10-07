@@ -16,7 +16,7 @@ standalone_frontend/node_modules/
 *.db-shm
 *.db-wal
 *.invalid.*
-mai_*.json.*.tmp
+ai_astra_*.json.*.tmp
 
 # App data folders
 .standalone_user_data/

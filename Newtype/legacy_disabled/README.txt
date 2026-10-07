@@ -1,4 +1,4 @@
-The legacy Mai_HS.ps1 launcher is intentionally disabled.
+The legacy AIAstra_HS.ps1 launcher is intentionally disabled.
 
 It was an old setup script that overwrote training/requirements files, force-reinstalled
 Python packages, and launched the obsolete Newtype desktop. It is retained here as a

@@ -233,9 +233,9 @@ def _close_chunk_brain(chunk_brain) -> None:
             pass
 
 
-class MaiBackendAPI:
+class AIAstraBackendAPI:
     """
-    Backend-facing service boundary for the Mai model runtime.
+    Backend-facing service boundary for the AI Astra model runtime.
 
     The current PySide UI can call this directly in-process, and a future
     Electron shell can expose the same methods over IPC or HTTP without
@@ -622,7 +622,7 @@ class MaiBackendAPI:
             'get_knowledge_concepts': 'Return canonical concepts captured by the knowledge layer.',
             'get_knowledge_facts': 'Return extracted facts with multi-dimensional confidence and provenance metadata.',
             'get_knowledge_evidence': 'Return provenance rows supporting one fact or one knowledge query.',
-            'get_knowledge_identity_traits': 'Return durable identity-level traits extracted for Mai.',
+            'get_knowledge_identity_traits': 'Return durable identity-level traits extracted for AI Astra.',
             'get_attention_snapshot': 'Return analog-attention weights and summaries.',
             'get_context_performance_snapshot': 'Return context-length performance metrics.',
             'get_semantic_cluster_snapshot': 'Return semantic cluster summaries and related stats.',
@@ -1750,7 +1750,7 @@ class MaiBackendAPI:
         category_map = self.get_transport_category_map()
         max_batch_size = int(self.api_config.get('transport_max_batch_size', 32) or 32)
         return {
-            'name': 'mai_backend_api',
+            'name': 'ai_astra_backend_api',
             'api_version': 1,
             'app_dir': self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__)),
             'storage': self.get_storage_snapshot(),
@@ -3360,7 +3360,7 @@ class MaiBackendAPI:
         if db_file and db_file.endswith('.db'):
             return db_file[:-3] + '.hsb'
         app_dir = self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(app_dir, 'mai_phoenix_brain.hsb')
+        return os.path.join(app_dir, 'ai_astra_phoenix_brain.hsb')
 
     def _sidecar_targets(self) -> dict[str, str]:
         return {

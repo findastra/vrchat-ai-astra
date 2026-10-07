@@ -1,4 +1,4 @@
-"""Backend runtime and bootstrap for Mai without any Qt dependency."""
+"""Backend runtime and bootstrap for AI Astra without any Qt dependency."""
 
 import sys, sqlite3, re, random, os, shutil, json, math, copy, threading, time, gc, subprocess, ast, functools
 import multiprocessing as mp
@@ -8,7 +8,7 @@ from collections import defaultdict, deque
 import psutil
 import numpy as np
 try:
-    from .backend_api import MaiBackendAPI, process_text_chunk_task
+    from .backend_api import AIAstraBackendAPI, process_text_chunk_task
     from .cognitive_core import NornCognitiveCore
     from .backend_knowledge import KnowledgeStore as BackendKnowledgeStore
     from .backend_features import (
@@ -27,7 +27,7 @@ try:
         TruthFactTable as BackendTruthFactTable,
     )
 except ImportError:
-    from backend_api import MaiBackendAPI, process_text_chunk_task
+    from backend_api import AIAstraBackendAPI, process_text_chunk_task
     from cognitive_core import NornCognitiveCore
     from backend_knowledge import KnowledgeStore as BackendKnowledgeStore
     from backend_features import (
@@ -47,17 +47,17 @@ except ImportError:
     )
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-STATE_DIR = os.path.abspath(os.environ.get('MAI_STATE_DIR', APP_DIR))
+STATE_DIR = os.path.abspath(os.environ.get('AI_ASTRA_STATE_DIR', APP_DIR))
 os.makedirs(STATE_DIR, exist_ok=True)
 TRAINING_DIR = os.path.join(STATE_DIR, 'training')
 
-DB_FILE = os.path.join(STATE_DIR, 'mai_phoenix_brain.db')
-NN_MODEL_FILE = os.path.join(STATE_DIR, 'mai_phoenix_model.json')
-VOCAB_FILE = os.path.join(STATE_DIR, 'mai_phoenix_vocab.json')
-ATTENTION_FILE = os.path.join(STATE_DIR, 'mai_attention_weights.json')
-CONTEXT_SCORES_FILE = os.path.join(STATE_DIR, 'mai_context_scores.json')
-SEMANTIC_CLUSTERS_FILE = os.path.join(STATE_DIR, 'mai_semantic_clusters.json')
-SETTINGS_FILE = os.path.join(STATE_DIR, 'mai_settings.json')
+DB_FILE = os.path.join(STATE_DIR, 'ai_astra_phoenix_brain.db')
+NN_MODEL_FILE = os.path.join(STATE_DIR, 'ai_astra_phoenix_model.json')
+VOCAB_FILE = os.path.join(STATE_DIR, 'ai_astra_phoenix_vocab.json')
+ATTENTION_FILE = os.path.join(STATE_DIR, 'ai_astra_attention_weights.json')
+CONTEXT_SCORES_FILE = os.path.join(STATE_DIR, 'ai_astra_context_scores.json')
+SEMANTIC_CLUSTERS_FILE = os.path.join(STATE_DIR, 'ai_astra_semantic_clusters.json')
+SETTINGS_FILE = os.path.join(STATE_DIR, 'ai_astra_settings.json')
 INITIAL_KNOWLEDGE_FILE = os.path.join(TRAINING_DIR, 'initial_knowledge.txt')
 
 
@@ -1128,11 +1128,11 @@ def get_system_tier():
         return {'tier': 'medium', 'total_ram_mb': 8000, 'has_gpu': False}
 
 def _debug_log(category, message):
-    """Write to mai_debug.log when debug_logging is enabled. Thread-safe."""
+    """Write to ai_astra_debug.log when debug_logging is enabled. Thread-safe."""
     if not (getattr(settings_manager, 'settings', None) and settings_manager.get('debug_logging', False)):
         return
     try:
-        log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mai_debug.log')
+        log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ai_astra_debug.log')
         with open(log_path, 'a', encoding='utf-8') as f:
             f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} [{category}] {message}\n")
     except Exception as e:
@@ -3221,7 +3221,7 @@ class HybridBrain:
                     sys.path.insert(0, _newtype)
                 from brain_backend_newtype import NewtypeBrainBackend
                 base_path = os.path.dirname(os.path.abspath(db_file)) if db_file != ':memory:' else '.'
-                hsb_path = (db_file.replace('.db', '.hsb') if db_file.endswith('.db') else os.path.join(base_path, 'mai_phoenix_brain.hsb'))
+                hsb_path = (db_file.replace('.db', '.hsb') if db_file.endswith('.db') else os.path.join(base_path, 'ai_astra_phoenix_brain.hsb'))
                 self._storage_backend = NewtypeBrainBackend(base_path=base_path or '.', hsb_file=hsb_path, use_hsb_persistence=not is_clone)
                 if not is_clone:
                     print("HybridBrain: using Newtype HSB backend for patterns/associations")
@@ -5262,7 +5262,7 @@ class HybridBrain:
             'one interesting point is that ',
             'the short version is that ',
             'a useful way to frame ',
-            'what makes mai different is that ',
+            'what makes astra different is that ',
             'what stands out most is that ',
             'the main idea is that ',
             'another supporting point is that ',
@@ -5308,7 +5308,7 @@ class HybridBrain:
         text_terms = {term for term in self.clean_text(cleaned) if len(term) > 2}
         topical_terms = {
             term for term in query_terms
-            if term not in {'mai', 'you', 'your', 'phoenix', 'what', 'how', 'why', 'tell', 'about', 'something', 'interesting'}
+            if term not in {'astra', 'you', 'your', 'phoenix', 'what', 'how', 'why', 'tell', 'about', 'something', 'interesting'}
         }
         active_terms = topical_terms or query_terms
         overlap_count = len(active_terms.intersection(text_terms))
@@ -5351,7 +5351,7 @@ class HybridBrain:
 
     def _collect_open_ended_realization_units(self, user_input, response_plan=None):
         plan = response_plan if isinstance(response_plan, dict) else {}
-        query_targets_mai = bool(getattr(self, 'knowledge_store', None) and self.knowledge_store._query_targets_mai(self.knowledge_store._normalize_text(user_input)))
+        query_targets_ai_astra = bool(getattr(self, 'knowledge_store', None) and self.knowledge_store._query_targets_ai_astra(self.knowledge_store._normalize_text(user_input)))
         seen = set()
         units = []
 
@@ -5367,7 +5367,7 @@ class HybridBrain:
             score = self._score_realization_text(cleaned, user_input, plan, confidence_profile, uncertainties, kind=kind)
             if score == float('-inf'):
                 return
-            if score < 0.38 and not (query_targets_mai and kind in {'identity', 'claim'}):
+            if score < 0.38 and not (query_targets_ai_astra and kind in {'identity', 'claim'}):
                 return
             seen.add(key)
             units.append({
@@ -5434,17 +5434,17 @@ class HybridBrain:
         stripped = str(text or '').strip()
         if not stripped:
             return ''
-        if len(stripped) >= 3 and stripped[:3].lower() == 'mai':
+        if len(stripped) >= 3 and stripped[:3].lower() == 'astra':
             remainder = stripped[3:]
             if not remainder or not remainder[0].isalpha():
-                return 'Mai' + remainder
+                return 'AI Astra' + remainder
         if len(stripped) >= 3 and stripped[:3].upper() == 'SGM':
             return 'SGM' + stripped[3:]
         return stripped[:1].lower() + stripped[1:]
 
-    def _pronounize_mai_sentence(self, text):
+    def _pronounize_ai_astra_sentence(self, text):
         cleaned = str(text or '').strip()
-        if cleaned.lower().startswith('mai '):
+        if cleaned.lower().startswith('astra '):
             return 'She ' + cleaned[4:]
         return cleaned
 
@@ -5481,7 +5481,7 @@ class HybridBrain:
             return None
         if intent == 'self_description':
             return (
-                "Mai is a non-tensor statistical and graph-learning AI. "
+                "AI Astra is a non-tensor statistical and graph-learning AI. "
                 "She learns through persistent memory, bounded chemistry-like control signals, learned goals, relations, and feedback."
             )
         return None
@@ -5521,11 +5521,11 @@ class HybridBrain:
         units = self._collect_open_ended_realization_units(user_input, plan)
         if intent == 'self_description' and units:
             strongest_text = str(units[0].get('text', '') or '').strip().lower()
-            if strongest_text.startswith('mai prefers '):
+            if strongest_text.startswith('astra prefers '):
                 alternate = next(
                     (
                         item for item in units[1:]
-                        if not str(item.get('text', '') or '').strip().lower().startswith('mai prefers ')
+                        if not str(item.get('text', '') or '').strip().lower().startswith('astra prefers ')
                     ),
                     None,
                 )
@@ -5580,7 +5580,7 @@ class HybridBrain:
                     sentences.append(lead)
                 if support_text:
                     support = self._evidence_led_sentence(
-                        self._pronounize_mai_sentence(support_text.rstrip('.!?')),
+                        self._pronounize_ai_astra_sentence(support_text.rstrip('.!?')),
                         cognitive_action=cognitive_action,
                     )
                     if support:
@@ -5591,7 +5591,7 @@ class HybridBrain:
                     sentences.append(lead)
                 if support_text:
                     support = self._evidence_led_sentence(
-                        self._pronounize_mai_sentence(support_text.rstrip('.!?')),
+                        self._pronounize_ai_astra_sentence(support_text.rstrip('.!?')),
                         cognitive_action=cognitive_action,
                     )
                     if support:
@@ -5618,7 +5618,7 @@ class HybridBrain:
                     sentences.append(lead)
                 if support_text:
                     support = self._evidence_led_sentence(
-                        self._pronounize_mai_sentence(support_text.rstrip('.!?')),
+                        self._pronounize_ai_astra_sentence(support_text.rstrip('.!?')),
                         cognitive_action=cognitive_action,
                     )
                     if support:
@@ -5722,7 +5722,7 @@ class HybridBrain:
         fact_summaries = self._collect_response_plan_summaries(user_input, plan, fact_limit=2)
         focus_terms = {
             term for term in self.clean_text(user_input)
-            if len(term) > 3 and term not in {'what', 'does', 'did', 'just', 'mai', 'sgm', 'system', 'about'}
+            if len(term) > 3 and term not in {'what', 'does', 'did', 'just', 'astra', 'sgm', 'system', 'about'}
         }
 
         seen = set()
@@ -7127,7 +7127,7 @@ def create_headless_backend_api(brain=None):
     if brain_instance is None:
         use_hsb_backend = bool(settings_manager.get('use_hsb_backend', False))
         brain_instance = HybridBrain(DB_FILE, use_hsb_backend=use_hsb_backend)
-    return MaiBackendAPI(
+    return AIAstraBackendAPI(
         brain_instance,
         settings_manager,
         memory_manager,

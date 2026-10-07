@@ -94,7 +94,7 @@ function escapeRegExp(value) {
 
 function getPathRoots() {
   const service = state.service || {};
-  return [service.workspace_root, service.mai_root]
+  return [service.workspace_root, service.ai_astra_root]
     .filter(Boolean)
     .map((root) => normalizePathText(root).replace(/[\\]+$/, ''));
 }
@@ -256,7 +256,7 @@ function renderMetrics() {
 
 function renderConversation() {
   if (!state.conversation.length) {
-    elements.transcript.innerHTML = '<div class="transcript__empty">Mai is ready. Send a message to start the conversation.</div>';
+    elements.transcript.innerHTML = '<div class="transcript__empty">AI Astra is ready. Send a message to start the conversation.</div>';
     elements.responseStats.textContent = 'No response yet.';
     elements.rewardButton.disabled = true;
     elements.penalizeButton.disabled = true;
@@ -317,7 +317,7 @@ function renderTraining() {
       .join('');
   }
 
-  elements.trainingResult.textContent = state.trainingResult || 'Queue a file or folder to inspect Mai\'s training plan.';
+  elements.trainingResult.textContent = state.trainingResult || 'Queue a file or folder to inspect AI Astra\'s training plan.';
 }
 
 function renderSettings() {
@@ -380,7 +380,7 @@ function renderAll() {
 }
 
 async function refreshRuntime() {
-  const batchPayload = await window.maiBridge.batch([
+  const batchPayload = await window.aiAstraBridge.batch([
     { id: 'bootstrap', method: 'get_runtime_bootstrap_snapshot', params: {} },
     { id: 'features', method: 'get_feature_runtime_snapshot', params: {} },
     { id: 'settings', method: 'get_settings_snapshot', params: {} },
@@ -396,7 +396,7 @@ async function refreshRuntime() {
 
 async function bootstrap() {
   try {
-    const payload = await window.maiBridge.bootstrap();
+    const payload = await window.aiAstraBridge.bootstrap();
     state.backendState = 'running';
     state.bootstrap = payload.startup.bootstrap;
     state.featureRuntime = payload.startup.features;
@@ -478,7 +478,7 @@ async function handleSend(event) {
   setAlert('Sending message to the live backend...', 'info');
 
   try {
-    const result = unwrapEnvelope(await window.maiBridge.invoke('generate_response', { user_input: prompt }));
+    const result = unwrapEnvelope(await window.aiAstraBridge.invoke('generate_response', { user_input: prompt }));
     const cognition = result.metadata?.cognitive_trace || {};
     const cognitiveText = cognition.goal && cognition.action
       ? ` | Goal ${String(cognition.goal).replace(/_/g, ' ')} | Strategy ${String(cognition.action).replace(/_/g, ' ')}`
@@ -515,7 +515,7 @@ async function applyFeedback(isPositive) {
   setBusy(elements.rewardButton, true, 'Saving');
   setBusy(elements.penalizeButton, true, 'Saving');
   try {
-    const payload = unwrapEnvelope(await window.maiBridge.invoke('apply_feedback', {
+    const payload = unwrapEnvelope(await window.aiAstraBridge.invoke('apply_feedback', {
       sentence: assistant.text,
       is_positive: isPositive,
     }));
@@ -538,7 +538,7 @@ async function exportConversation() {
   }
   setBusy(elements.exportConversationButton, true, 'Exporting');
   try {
-    const payload = unwrapEnvelope(await window.maiBridge.invoke('export_conversation_text', {
+    const payload = unwrapEnvelope(await window.aiAstraBridge.invoke('export_conversation_text', {
       text: buildConversationArchive(),
       folder_name: 'conversations',
     }));
@@ -548,7 +548,7 @@ async function exportConversation() {
       setAlert(payload.message || 'Chat exported.', 'success');
     }
     if (payload.path) {
-      await window.maiBridge.openPath(payload.path);
+      await window.aiAstraBridge.openPath(payload.path);
     }
   } catch (error) {
     setAlert(`Export failed: ${error.message}`, 'error');
@@ -558,7 +558,7 @@ async function exportConversation() {
 }
 
 async function pickTrainingSources() {
-  const selection = await window.maiBridge.pickTrainingSources();
+  const selection = await window.aiAstraBridge.pickTrainingSources();
   if (!selection || selection.canceled) {
     return;
   }
@@ -577,7 +577,7 @@ async function recalcTrainingPlans() {
 
   setBusy(elements.refreshTrainingButton, true, 'Scanning');
   try {
-    const discovery = unwrapEnvelope(await window.maiBridge.invoke('collect_training_files', {
+    const discovery = unwrapEnvelope(await window.aiAstraBridge.invoke('collect_training_files', {
       paths: state.selectedTrainingPaths,
     }));
     const requests = (discovery.paths || []).slice(0, 6).map((filePath, index) => ({
@@ -585,7 +585,7 @@ async function recalcTrainingPlans() {
       method: 'get_training_plan',
       params: { file_path: filePath },
     }));
-    const batchPayload = requests.length ? await window.maiBridge.batch(requests) : { results: [] };
+    const batchPayload = requests.length ? await window.aiAstraBridge.batch(requests) : { results: [] };
     const results = batchMap(batchPayload);
     state.trainingPlans = requests
       .map((request) => unwrapEnvelope(results[request.id]))
@@ -615,7 +615,7 @@ async function runTraining() {
   setBusy(elements.runTrainingButton, true, 'Training');
   setAlert('Training is running through the backend API...', 'info');
   try {
-    const payload = unwrapEnvelope(await window.maiBridge.invoke('train_files', {
+    const payload = unwrapEnvelope(await window.aiAstraBridge.invoke('train_files', {
       paths: state.selectedTrainingPaths,
       chunk_size_override: chunkSizeOverride > 0 ? chunkSizeOverride : null,
       base_priority_boost: priorityBoost > 0 ? priorityBoost : 2,
@@ -696,7 +696,7 @@ async function applySettings() {
         params: {},
       },
     ];
-    const batchPayload = await window.maiBridge.batch(requests);
+    const batchPayload = await window.aiAstraBridge.batch(requests);
     const failures = (batchPayload.results || []).filter((item) => item.ok === false);
     if (failures.length) {
       throw new Error(failures.map((item) => item.error).join(' | '));
@@ -713,7 +713,7 @@ async function applySettings() {
 async function resetSettings() {
   setBusy(elements.resetSettingsButton, true, 'Resetting');
   try {
-    unwrapEnvelope(await window.maiBridge.invoke('reset_settings', {}));
+    unwrapEnvelope(await window.aiAstraBridge.invoke('reset_settings', {}));
     await refreshRuntime();
     setAlert('Settings restored to defaults.', 'success');
   } catch (error) {
@@ -726,7 +726,7 @@ async function resetSettings() {
 async function runMaintenance(methodName, button, message) {
   setBusy(button, true, 'Running');
   try {
-    const payload = unwrapEnvelope(await window.maiBridge.invoke(methodName, {}));
+    const payload = unwrapEnvelope(await window.aiAstraBridge.invoke(methodName, {}));
     await refreshRuntime();
     setAlert(payload.message || message, 'success');
   } catch (error) {
@@ -742,14 +742,14 @@ async function openFromDocs(key) {
     setAlert('This shortcut is not available yet.', 'error');
     return;
   }
-  const result = await window.maiBridge.openPath(target);
+  const result = await window.aiAstraBridge.openPath(target);
   if (!result.ok) {
     setAlert(`Could not open path: ${result.error}`, 'error');
   }
 }
 
 function subscribeToBridge() {
-  window.maiBridge.onBackendLog((entry) => {
+  window.aiAstraBridge.onBackendLog((entry) => {
     state.logs.push(entry);
     if (state.logs.length > 400) {
       state.logs.shift();
@@ -757,7 +757,7 @@ function subscribeToBridge() {
     renderLogs();
   });
 
-  window.maiBridge.onBackendState((payload) => {
+  window.aiAstraBridge.onBackendState((payload) => {
     state.backendState = payload.state || state.backendState;
     if (state.backendState === 'stopped') {
       setAlert('Backend stopped. Restart the app to reconnect.', 'error');

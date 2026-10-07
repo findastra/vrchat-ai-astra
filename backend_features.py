@@ -1207,7 +1207,7 @@ class Critic:
             'about',
             'your',
             'you',
-            'mai',
+            'astra',
             'phoenix',
             'sgm',
             'system',
@@ -1666,54 +1666,54 @@ class ResponseLearningSystem:
         self.sentiment_learning = {}
         self.conversation_flow = []
 
-    def learn_from_response(self, user_input, mai_response, human_response):
+    def learn_from_response(self, user_input, ai_astra_response, human_response):
         try:
-            if not user_input or not mai_response or not human_response:
+            if not user_input or not ai_astra_response or not human_response:
                 return
-            chain_key = f"{user_input.lower().strip()} -> {mai_response.lower().strip()}"
+            chain_key = f"{user_input.lower().strip()} -> {ai_astra_response.lower().strip()}"
             if chain_key not in self.response_chains:
                 self.response_chains[chain_key] = []
             self.response_chains[chain_key].append({
                 'human_response': human_response,
                 'timestamp': time.time(),
-                'context': self._extract_context(user_input, mai_response),
+                'context': self._extract_context(user_input, ai_astra_response),
             })
-            self._learn_response_patterns(mai_response, human_response)
-            self._learn_sentiment_context(user_input, mai_response, human_response)
-            self._update_conversation_flow(user_input, mai_response, human_response)
+            self._learn_response_patterns(ai_astra_response, human_response)
+            self._learn_sentiment_context(user_input, ai_astra_response, human_response)
+            self._update_conversation_flow(user_input, ai_astra_response, human_response)
             if len(self.response_chains[chain_key]) > 10:
                 self.response_chains[chain_key] = self.response_chains[chain_key][-10:]
         except Exception as e:
             print(f"Response learning error: {e}")
 
-    def _extract_context(self, user_input, mai_response):
+    def _extract_context(self, user_input, ai_astra_response):
         try:
             return {
                 'user_length': len(user_input.split()),
-                'mai_length': len(mai_response.split()),
+                'ai_astra_length': len(ai_astra_response.split()),
                 'user_sentiment': self._analyze_sentiment(user_input),
-                'mai_sentiment': self._analyze_sentiment(mai_response),
-                'topics': self._extract_topics(user_input + " " + mai_response),
+                'ai_astra_sentiment': self._analyze_sentiment(ai_astra_response),
+                'topics': self._extract_topics(user_input + " " + ai_astra_response),
             }
         except (KeyError, TypeError, AttributeError):
             return {}
 
-    def _learn_response_patterns(self, mai_response, human_response):
+    def _learn_response_patterns(self, ai_astra_response, human_response):
         try:
-            mai_words = mai_response.lower().split()
+            ai_astra_words = ai_astra_response.lower().split()
             human_words = human_response.lower().split()
-            for mai_word in mai_words:
-                if mai_word not in self.response_patterns:
-                    self.response_patterns[mai_word] = {}
+            for ai_astra_word in ai_astra_words:
+                if ai_astra_word not in self.response_patterns:
+                    self.response_patterns[ai_astra_word] = {}
                 for human_word in human_words:
-                    self.response_patterns[mai_word][human_word] = self.response_patterns[mai_word].get(human_word, 0) + 1
+                    self.response_patterns[ai_astra_word][human_word] = self.response_patterns[ai_astra_word].get(human_word, 0) + 1
         except Exception as e:
             print(f"Pattern learning error: {e}")
 
-    def _learn_sentiment_context(self, user_input, mai_response, human_response):
+    def _learn_sentiment_context(self, user_input, ai_astra_response, human_response):
         try:
             sentiment = self._analyze_sentiment(human_response)
-            context_key = f"{self._analyze_sentiment(user_input)}_{self._analyze_sentiment(mai_response)}"
+            context_key = f"{self._analyze_sentiment(user_input)}_{self._analyze_sentiment(ai_astra_response)}"
             if context_key not in self.sentiment_learning:
                 self.sentiment_learning[context_key] = []
             self.sentiment_learning[context_key].append(sentiment)
@@ -1722,9 +1722,9 @@ class ResponseLearningSystem:
         except Exception as e:
             print(f"Sentiment learning error: {e}")
 
-    def _update_conversation_flow(self, user_input, mai_response, human_response):
+    def _update_conversation_flow(self, user_input, ai_astra_response, human_response):
         try:
-            self.conversation_flow.append({'user': user_input, 'mai': mai_response, 'human': human_response, 'timestamp': time.time()})
+            self.conversation_flow.append({'user': user_input, 'astra': ai_astra_response, 'human': human_response, 'timestamp': time.time()})
             if len(self.conversation_flow) > 50:
                 self.conversation_flow = self.conversation_flow[-50:]
         except Exception as e:
@@ -1756,16 +1756,16 @@ class ResponseLearningSystem:
         except (TypeError, AttributeError):
             return []
 
-    def get_response_suggestions(self, user_input, mai_response):
+    def get_response_suggestions(self, user_input, ai_astra_response):
         try:
             suggestions = []
             for chain_key, responses in self.response_chains.items():
                 if user_input.lower().strip() in chain_key:
                     for response_data in responses[-3:]:
                         suggestions.append({'response': response_data['human_response'], 'confidence': 0.7, 'source': 'response_chain'})
-            for mai_word in mai_response.lower().split():
-                if mai_word in self.response_patterns:
-                    for human_word, count in sorted(self.response_patterns[mai_word].items(), key=lambda x: x[1], reverse=True)[:3]:
+            for ai_astra_word in ai_astra_response.lower().split():
+                if ai_astra_word in self.response_patterns:
+                    for human_word, count in sorted(self.response_patterns[ai_astra_word].items(), key=lambda x: x[1], reverse=True)[:3]:
                         suggestions.append({'response': f"Response involving '{human_word}'", 'confidence': min(count / 10, 1.0), 'source': 'pattern'})
             return suggestions[:5]
         except Exception as e:
@@ -1886,10 +1886,10 @@ class TopicDetectionSystem:
         try:
             if topic in self.topic_contexts and self.topic_contexts[topic].get('frequency', 1) < self.rare_topic_threshold:
                 return True
-            if 'user_input' in context and 'mai_response' in context:
+            if 'user_input' in context and 'ai_astra_response' in context:
                 user_words = set((context.get('user_input') or '').lower().split())
-                mai_words = set((context.get('mai_response') or '').lower().split())
-                if topic in user_words and topic not in mai_words:
+                ai_astra_words = set((context.get('ai_astra_response') or '').lower().split())
+                if topic in user_words and topic not in ai_astra_words:
                     return True
             return False
         except Exception as e:

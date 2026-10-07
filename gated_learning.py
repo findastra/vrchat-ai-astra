@@ -1,6 +1,6 @@
 """Propose durable learning only when a held-out gate does not regress.
 
-This is the explicit learn -> hygiene -> evaluate -> commit/rollback loop for Mai.
+This is the explicit learn -> hygiene -> evaluate -> commit/rollback loop for AI Astra.
 Live chat still uses cheap hygiene gates; this module is for intentional memory writes
 that should survive only when they preserve coherent held-out behavior.
 """
@@ -27,13 +27,13 @@ DEFAULT_GATE_BASELINE = APP_DIR / 'evaluation_baseline_generative.json'
 def _build_trial_api(live_api: Any):
     try:
         from . import backend_runtime
-        from .backend_api import MaiBackendAPI
+        from .backend_api import AIAstraBackendAPI
     except ImportError:
         import backend_runtime
-        from backend_api import MaiBackendAPI
+        from backend_api import AIAstraBackendAPI
 
     brain = backend_runtime.HybridBrain(backend_runtime.DB_FILE, is_clone=True, use_hsb_backend=False)
-    trial = object.__new__(MaiBackendAPI)
+    trial = object.__new__(AIAstraBackendAPI)
     trial.brain = brain
     trial.settings_manager = getattr(live_api, 'settings_manager', backend_runtime.settings_manager)
     trial.memory_manager = getattr(live_api, 'memory_manager', backend_runtime.memory_manager)

@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 import os
 import sqlite3
 import json
@@ -17,9 +17,9 @@ from PySide6.QtCore import Qt
 from pyvistaqt import QtInteractor
 
 # --- Constants for File Names ---
-DB_FILE = 'mai_phoenix_brain.db'
-SEMANTIC_CLUSTERS_FILE = 'mai_semantic_clusters.json'
-ATTENTION_FILE = 'mai_attention_weights.json'
+DB_FILE = 'ai_astra_phoenix_brain.db'
+SEMANTIC_CLUSTERS_FILE = 'ai_astra_semantic_clusters.json'
+ATTENTION_FILE = 'ai_astra_attention_weights.json'
 
 class BrainDataLoader:
     """Loads and processes all brain-related files into a unified graph structure."""
@@ -238,7 +238,7 @@ class MainWindow(QMainWindow):
     """The main application window."""
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Mai AI - 3D Brain Map Viewer")
+        self.setWindowTitle("AI Astra AI - 3D Brain Map Viewer")
         self.setGeometry(100, 100, 1200, 900)
         self.data_loader = None
         self.central_widget = QWidget()

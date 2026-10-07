@@ -1,7 +1,7 @@
 {
-  "name": "mai-testing-frontend",
+  "name": "astra-testing-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "Minimal Electron client for testing the Mai backend transport.",
+  "description": "Minimal Electron client for testing the AI Astra backend transport.",
   "main": "main.js"
 }

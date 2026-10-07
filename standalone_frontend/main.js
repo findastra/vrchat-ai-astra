@@ -6,32 +6,32 @@ const path = require('path');
 const { BackendService } = require('./backend_service');
 
 const APP_ROOT = __dirname;
-const DEFAULT_MAI_ROOT = path.resolve(APP_ROOT, '..');
-const MAI_ROOT = path.resolve(process.env.MAI_ROOT || DEFAULT_MAI_ROOT);
-const WORKSPACE_ROOT = path.resolve(process.env.MAI_WORKSPACE_ROOT || path.resolve(MAI_ROOT, '..'));
+const DEFAULT_AI_ASTRA_ROOT = path.resolve(APP_ROOT, '..');
+const AI_ASTRA_ROOT = path.resolve(process.env.AI_ASTRA_ROOT || DEFAULT_AI_ASTRA_ROOT);
+const WORKSPACE_ROOT = path.resolve(process.env.AI_ASTRA_WORKSPACE_ROOT || path.resolve(AI_ASTRA_ROOT, '..'));
 const DOCS_ROOT = path.join(WORKSPACE_ROOT, 'docs');
 const RENDERER_INDEX = path.join(APP_ROOT, 'renderer', 'index.html');
 const PRELOAD_PATH = path.join(APP_ROOT, 'preload.js');
-const WINDOW_ICON = path.join(MAI_ROOT, 'mailogo.png');
-const SMOKE_MODE = process.argv.includes('--smoke-test') || process.env.MAI_FRONTEND_SMOKE === '1';
-const SMOKE_SCENARIO = process.env.MAI_FRONTEND_SMOKE_SCENARIO || 'full';
-const SMOKE_OUTPUT_FILE = process.env.MAI_SMOKE_OUTPUT_FILE || path.join(APP_ROOT, '.last_smoke_result.json');
-const USER_DATA_ROOT = process.env.MAI_FRONTEND_USER_DATA || path.join(MAI_ROOT, '.standalone_user_data');
+const WINDOW_ICON = path.join(AI_ASTRA_ROOT, 'ai_astra_logo.png');
+const SMOKE_MODE = process.argv.includes('--smoke-test') || process.env.AI_ASTRA_FRONTEND_SMOKE === '1';
+const SMOKE_SCENARIO = process.env.AI_ASTRA_FRONTEND_SMOKE_SCENARIO || 'full';
+const SMOKE_OUTPUT_FILE = process.env.AI_ASTRA_SMOKE_OUTPUT_FILE || path.join(APP_ROOT, '.last_smoke_result.json');
+const USER_DATA_ROOT = process.env.AI_ASTRA_FRONTEND_USER_DATA || path.join(AI_ASTRA_ROOT, '.standalone_user_data');
 const EFFECTIVE_USER_DATA_ROOT = SMOKE_MODE
-  ? path.join(os.tmpdir(), `mai-standalone-smoke-${process.pid}`)
+  ? path.join(os.tmpdir(), `astra-standalone-smoke-${process.pid}`)
   : USER_DATA_ROOT;
 const SMOKE_STATE_ROOT = SMOKE_MODE
-  ? path.join(os.tmpdir(), `mai-standalone-state-${process.pid}`)
+  ? path.join(os.tmpdir(), `astra-standalone-state-${process.pid}`)
   : null;
 if (SMOKE_STATE_ROOT) {
-  process.env.MAI_STATE_DIR = SMOKE_STATE_ROOT;
+  process.env.AI_ASTRA_STATE_DIR = SMOKE_STATE_ROOT;
 }
-const SMOKE_TRAINING_FILE = path.join(os.tmpdir(), `mai-standalone-training-smoke-${process.pid}.md`);
-const SMOKE_SCREENSHOT_DIR = process.env.MAI_SMOKE_SCREENSHOT_DIR
-  ? path.resolve(process.env.MAI_SMOKE_SCREENSHOT_DIR)
+const SMOKE_TRAINING_FILE = path.join(os.tmpdir(), `astra-standalone-training-smoke-${process.pid}.md`);
+const SMOKE_SCREENSHOT_DIR = process.env.AI_ASTRA_SMOKE_SCREENSHOT_DIR
+  ? path.resolve(process.env.AI_ASTRA_SMOKE_SCREENSHOT_DIR)
   : null;
-const WINDOW_WIDTH = Number(process.env.MAI_WINDOW_WIDTH || 1560);
-const WINDOW_HEIGHT = Number(process.env.MAI_WINDOW_HEIGHT || 960);
+const WINDOW_WIDTH = Number(process.env.AI_ASTRA_WINDOW_WIDTH || 1560);
+const WINDOW_HEIGHT = Number(process.env.AI_ASTRA_WINDOW_HEIGHT || 960);
 const RENDERER_METHODS = new Set([
   'apply_feedback',
   'collect_training_files',
@@ -89,20 +89,20 @@ if (SMOKE_MODE) {
 }
 
 const backend = new BackendService({
-  pythonPath: process.env.MAI_BACKEND_PYTHON,
+  pythonPath: process.env.AI_ASTRA_BACKEND_PYTHON,
   workspaceRoot: WORKSPACE_ROOT,
-  maiRoot: MAI_ROOT,
+  aiAstraRoot: AI_ASTRA_ROOT,
 });
 
 backend.on('log', (entry) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('mai:backend-log', entry);
+    mainWindow.webContents.send('astra:backend-log', entry);
   }
 });
 
 backend.on('state', (state) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('mai:backend-state', { state });
+    mainWindow.webContents.send('astra:backend-state', { state });
   }
 });
 
@@ -234,11 +234,11 @@ async function executeRendererSmoke() {
       }, 45000, 'transport state');
       if (smokeScenario !== 'training') {
         document.querySelector('[data-tab="command"]').click();
-        await window.maiBridge.smokeCapture('01-chat-ready');
+        await window.aiAstraBridge.smokeCapture('01-chat-ready');
 
         const prompt = document.getElementById('promptInput');
         const sendButton = document.getElementById('sendButton');
-        prompt.value = 'Provide one sentence describing Mai from the transport smoke test.';
+        prompt.value = 'Provide one sentence describing AI Astra from the transport smoke test.';
         prompt.dispatchEvent(new Event('input', { bubbles: true }));
         sendButton.click();
 
@@ -279,11 +279,11 @@ async function executeRendererSmoke() {
         if (!outcome.ok) {
           throw new Error(JSON.stringify(outcome));
         }
-        await window.maiBridge.smokeCapture('02-chat-response');
+        await window.aiAstraBridge.smokeCapture('02-chat-response');
       }
 
       document.querySelector('[data-tab="training"]').click();
-      await window.maiBridge.smokeCapture('03-training');
+      await window.aiAstraBridge.smokeCapture('03-training');
       const trainingSource = ${JSON.stringify(SMOKE_TRAINING_FILE)};
       state.selectedTrainingPaths = [trainingSource];
       renderTraining();
@@ -345,7 +345,7 @@ async function executeRendererSmoke() {
       }
 
       document.querySelector('[data-tab="systems"]').click();
-      await window.maiBridge.smokeCapture('04-systems');
+      await window.aiAstraBridge.smokeCapture('04-systems');
       const activeTab = document.querySelector('[data-tab="systems"]');
       const activePanel = document.querySelector('[data-panel="systems"]');
       if (activeTab?.getAttribute('aria-selected') !== 'true' || activePanel?.getAttribute('aria-hidden') !== 'false') {
@@ -406,7 +406,7 @@ async function runSmokeMode() {
   };
   try {
     fs.writeFileSync(SMOKE_TRAINING_FILE, [
-      '# Mai Training Smoke',
+      '# AI Astra Training Smoke',
       '',
       'This temporary file verifies that the standalone frontend training path is connected.',
       'The Electron renderer should calculate a plan and run a small training pass through the backend API.',
@@ -470,7 +470,7 @@ async function safeQuitBackend() {
     await backend.shutdown();
   } catch (error) {
     if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('mai:backend-log', {
+      mainWindow.webContents.send('astra:backend-log', {
         stream: 'stderr',
         text: `Standalone shutdown warning: ${error.message}`,
         timestamp: new Date().toISOString(),
@@ -479,9 +479,9 @@ async function safeQuitBackend() {
   }
 }
 
-ipcMain.handle('mai:bootstrap', async () => buildBootstrapPayload());
+ipcMain.handle('astra:bootstrap', async () => buildBootstrapPayload());
 
-ipcMain.handle('mai:invoke', async (_event, payload = {}) => {
+ipcMain.handle('astra:invoke', async (_event, payload = {}) => {
   const method = String(payload.method || '');
   if (!RENDERER_METHODS.has(method)) {
     throw new Error(`Renderer method is not allowed: ${method}`);
@@ -489,7 +489,7 @@ ipcMain.handle('mai:invoke', async (_event, payload = {}) => {
   return backend.invoke(method, payload.params || {});
 });
 
-ipcMain.handle('mai:batch', async (_event, requests = []) => {
+ipcMain.handle('astra:batch', async (_event, requests = []) => {
   if (!Array.isArray(requests) || requests.length > 32) {
     throw new Error('Renderer batch must be an array with at most 32 items.');
   }
@@ -501,9 +501,9 @@ ipcMain.handle('mai:batch', async (_event, requests = []) => {
   return backend.batch(requests);
 });
 
-ipcMain.handle('mai:pick-training-paths', async () => {
+ipcMain.handle('astra:pick-training-paths', async () => {
   const result = await dialog.showOpenDialog({
-    title: 'Select Mai training sources',
+    title: 'Select AI Astra training sources',
     buttonLabel: 'Queue for Training',
     defaultPath: WORKSPACE_ROOT,
     properties: ['openFile', 'openDirectory', 'multiSelections', 'dontAddToRecent'],
@@ -515,7 +515,7 @@ ipcMain.handle('mai:pick-training-paths', async () => {
   return result;
 });
 
-ipcMain.handle('mai:open-path', async (_event, targetPath) => {
+ipcMain.handle('astra:open-path', async (_event, targetPath) => {
   if (!targetPath) {
     return {
       ok: false,
@@ -528,7 +528,7 @@ ipcMain.handle('mai:open-path', async (_event, targetPath) => {
     return {
       ok: false,
       path: resolvedPath,
-      error: 'The requested path is outside the Mai workspace.',
+      error: 'The requested path is outside the AI Astra workspace.',
     };
   }
   if (!fs.existsSync(resolvedPath)) {
@@ -546,7 +546,7 @@ ipcMain.handle('mai:open-path', async (_event, targetPath) => {
   };
 });
 
-ipcMain.handle('mai:open-external', async (_event, url) => {
+ipcMain.handle('astra:open-external', async (_event, url) => {
   if (!isSafeExternalUrl(url)) {
     return { ok: false, error: 'Only HTTP and HTTPS links may be opened.' };
   }
@@ -554,7 +554,7 @@ ipcMain.handle('mai:open-external', async (_event, url) => {
   return { ok: true };
 });
 
-ipcMain.handle('mai:smoke-capture', async (_event, name) => {
+ipcMain.handle('astra:smoke-capture', async (_event, name) => {
   await captureSmokeScreenshot(String(name || 'screen').replace(/[^a-z0-9_-]/gi, '-'));
   return { ok: true };
 });
@@ -589,7 +589,7 @@ app.whenReady().then(() => {
         return;
       }
       if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('mai:backend-log', {
+        mainWindow.webContents.send('astra:backend-log', {
           stream: 'stderr',
           text: `Backend warm-up failed: ${error.message}`,
           timestamp: new Date().toISOString(),

@@ -658,7 +658,7 @@ class HighSpeedStorageEngine:
         """Save data to disk using HSB format"""
         if file_path is None:
             base = getattr(self, 'base_path', None) or '.'
-            file_path = os.path.join(base, 'mai_phoenix_brain.hsb')
+            file_path = os.path.join(base, 'ai_astra_phoenix_brain.hsb')
         if not file_path or not isinstance(file_path, str):
             raise ValueError("save_to_disk: file_path must be a non-empty string")
         print(f"Storage engine: Starting save to disk: {file_path}")
@@ -729,7 +729,7 @@ class HighSpeedStorageEngine:
     def load_from_disk(self, file_path: str = None):
         """Load data from disk using HSB format"""
         if file_path is None:
-            file_path = os.path.join(self.base_path, 'mai_phoenix_brain.hsb')
+            file_path = os.path.join(self.base_path, 'ai_astra_phoenix_brain.hsb')
             
         if not os.path.exists(file_path):
             print(f"No HSB brain file found: {file_path}")

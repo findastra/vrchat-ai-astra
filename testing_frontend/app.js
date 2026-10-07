@@ -64,7 +64,7 @@ function updateControlTrace(payload) {
 async function probe() {
   probeButton.disabled = true;
   try {
-    const payload = await window.maiTest.bootstrap();
+    const payload = await window.aiAstraTest.bootstrap();
     setStatus('online');
     endpoint.textContent = payload.service?.base_url || '--';
     session.textContent = payload.session?.session_id || '--';
@@ -86,7 +86,7 @@ async function send(event) {
   resetControlTrace();
   const started = performance.now();
   try {
-    const payload = unwrap(await window.maiTest.invoke('generate_response', { user_input: userInput }));
+    const payload = unwrap(await window.aiAstraTest.invoke('generate_response', { user_input: userInput }));
     response.textContent = payload.response || '[empty response]';
     latency.textContent = `${Math.round(performance.now() - started)} ms | quality ${Math.round(Number(payload.quality_score || 0) * 100)}%`;
     updateControlTrace(payload);
@@ -104,8 +104,8 @@ async function send(event) {
 $('chatForm').addEventListener('submit', send);
 probeButton.addEventListener('click', probe);
 $('clearButton').addEventListener('click', () => { diagnostics.textContent = ''; });
-window.maiTest.onState(({ state }) => setStatus(state));
-window.maiTest.onLog((entry) => {
+window.aiAstraTest.onState(({ state }) => setStatus(state));
+window.aiAstraTest.onLog((entry) => {
   if (diagnostics.textContent === '') diagnostics.textContent = '';
   diagnostics.textContent += `${entry.stream}: ${entry.text}\n`;
 });

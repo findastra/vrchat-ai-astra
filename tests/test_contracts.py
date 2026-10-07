@@ -7,7 +7,7 @@ import sqlite3
 import unittest
 from types import SimpleNamespace
 
-from backend_api import MaiBackendAPI
+from backend_api import AIAstraBackendAPI
 from backend_runtime import HybridBrain, PlainMLP, settings_manager
 from backend_features import AdaptiveLearningSystem
 from cognitive_core import NornCognitiveCore
@@ -92,7 +92,7 @@ class SettingsContractTests(unittest.TestCase):
             'parallel_workers': 'auto',
             'gpu_acceleration_enabled': False,
         }
-        self.api = object.__new__(MaiBackendAPI)
+        self.api = object.__new__(AIAstraBackendAPI)
         self.api.settings_manager = SimpleNamespace(default_settings=defaults)
 
     def test_setting_values_are_normalized_before_persistence(self):
@@ -358,7 +358,7 @@ class CognitiveCoreTests(unittest.TestCase):
         self.assertIn('matching stored episode', recall.lower())
 
         causal_claim = 'Liquid water freezes when molecules form a lattice.'
-        identity_claim = 'Mai prefers concise replies.'
+        identity_claim = 'AI Astra prefers concise replies.'
         causal_bias = brain._cognitive_unit_score_bias('fact', 'explain_causally', causal_claim)
         identity_bias = brain._cognitive_unit_score_bias('identity', 'explain_causally', identity_claim)
         self.assertGreater(causal_bias, identity_bias)
@@ -512,7 +512,7 @@ class TrainingBatchTests(unittest.TestCase):
 
 class TrainingHistoryTests(unittest.TestCase):
     def setUp(self):
-        self.api = object.__new__(MaiBackendAPI)
+        self.api = object.__new__(AIAstraBackendAPI)
         con = sqlite3.connect(':memory:')
         self.api.brain = SimpleNamespace(con=con, cur=con.cursor())
 

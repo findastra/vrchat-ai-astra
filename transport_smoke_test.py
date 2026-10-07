@@ -7,7 +7,7 @@ import urllib.error
 import urllib.request
 
 
-KNOWLEDGE_SAMPLE_TEXT = 'Mai is a statistical intelligence. Mai is part of the sgm system.'
+KNOWLEDGE_SAMPLE_TEXT = 'AI Astra is a statistical intelligence. AI Astra is part of the sgm system.'
 
 
 def _get_json(url: str) -> dict:
@@ -125,7 +125,7 @@ def run_http_smoke_test(port: int, prompt: str) -> dict:
             {
                 'id': 9,
                 'method': 'get_knowledge_facts',
-                'params': {'query': 'mai', 'limit': 4},
+                'params': {'query': 'astra', 'limit': 4},
             },
         )
         identity_traits = _post_json(
@@ -141,7 +141,7 @@ def run_http_smoke_test(port: int, prompt: str) -> dict:
             {
                 'id': 11,
                 'method': 'get_response_plan_preview',
-                'params': {'user_input': 'what is mai?', 'limit': 3},
+                'params': {'user_input': 'what is astra?', 'limit': 3},
             },
         )
         reasoning_preview = _post_json(
@@ -149,7 +149,7 @@ def run_http_smoke_test(port: int, prompt: str) -> dict:
             {
                 'id': 111,
                 'method': 'get_graph_reasoning_preview',
-                'params': {'user_input': 'why is mai part of the sgm system?', 'limit': 2, 'max_depth': 2},
+                'params': {'user_input': 'why is astra part of the sgm system?', 'limit': 2, 'max_depth': 2},
             },
         )
         hardware_profile = _post_json(
@@ -184,7 +184,7 @@ def run_http_smoke_test(port: int, prompt: str) -> dict:
                 {
                     'id': 21,
                     'method': 'generate_response',
-                    'params': {'user_input': 'how does memory replay help mai learn over time?'},
+                    'params': {'user_input': 'how does memory replay help astra learn over time?'},
                 },
             ],
         )
@@ -340,7 +340,7 @@ def run_stdio_smoke_test(prompt: str) -> dict:
             {
                 'id': 14,
                 'method': 'get_knowledge_facts',
-                'params': {'query': 'mai', 'limit': 4},
+                'params': {'query': 'astra', 'limit': 4},
             },
         )
         knowledge_facts = _read_json_line(process)
@@ -358,7 +358,7 @@ def run_stdio_smoke_test(prompt: str) -> dict:
             {
                 'id': 16,
                 'method': 'get_response_plan_preview',
-                'params': {'user_input': 'what is mai?', 'limit': 3},
+                'params': {'user_input': 'what is astra?', 'limit': 3},
             },
         )
         response_plan = _read_json_line(process)
@@ -367,7 +367,7 @@ def run_stdio_smoke_test(prompt: str) -> dict:
             {
                 'id': 161,
                 'method': 'get_graph_reasoning_preview',
-                'params': {'user_input': 'why is mai part of the sgm system?', 'limit': 2, 'max_depth': 2},
+                'params': {'user_input': 'why is astra part of the sgm system?', 'limit': 2, 'max_depth': 2},
             },
         )
         reasoning_preview = _read_json_line(process)
@@ -405,7 +405,7 @@ def run_stdio_smoke_test(prompt: str) -> dict:
                 {
                     'id': 21,
                     'method': 'generate_response',
-                    'params': {'user_input': 'how does memory replay help mai learn over time?'},
+                    'params': {'user_input': 'how does memory replay help astra learn over time?'},
                 },
             ],
         )
@@ -501,7 +501,7 @@ def run_stdio_smoke_test(prompt: str) -> dict:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Smoke-test Mai's headless transports.")
+    parser = argparse.ArgumentParser(description="Smoke-test AI Astra's headless transports.")
     parser.add_argument('--port', type=int, default=8771, help='HTTP port to use for the temporary backend.')
     parser.add_argument(
         '--transport',

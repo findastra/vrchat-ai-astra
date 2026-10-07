@@ -5,15 +5,15 @@ const path = require('path');
 
 const { BackendService } = require('../standalone_frontend/backend_service');
 
-const MAI_ROOT = path.resolve(__dirname, '..');
-const WORKSPACE_ROOT = path.resolve(MAI_ROOT, '..');
-const TEST_STATE_DIR = process.env.MAI_TEST_USE_LIVE_STATE === '1'
+const AI_ASTRA_ROOT = path.resolve(__dirname, '..');
+const WORKSPACE_ROOT = path.resolve(AI_ASTRA_ROOT, '..');
+const TEST_STATE_DIR = process.env.AI_ASTRA_TEST_USE_LIVE_STATE === '1'
   ? undefined
-  : path.join(os.tmpdir(), `mai-test-state-${process.pid}`);
+  : path.join(os.tmpdir(), `astra-test-state-${process.pid}`);
 const backend = new BackendService({
-  pythonPath: process.env.MAI_BACKEND_PYTHON,
+  pythonPath: process.env.AI_ASTRA_BACKEND_PYTHON,
   workspaceRoot: WORKSPACE_ROOT,
-  maiRoot: MAI_ROOT,
+  aiAstraRoot: AI_ASTRA_ROOT,
   stateDir: TEST_STATE_DIR,
 });
 
@@ -29,13 +29,13 @@ let quitting = false;
 
 backend.on('log', (entry) => {
   if (windowRef && !windowRef.isDestroyed()) {
-    windowRef.webContents.send('mai-test:log', entry);
+    windowRef.webContents.send('astra-test:log', entry);
   }
 });
 
 backend.on('state', (state) => {
   if (windowRef && !windowRef.isDestroyed()) {
-    windowRef.webContents.send('mai-test:state', { state });
+    windowRef.webContents.send('astra-test:state', { state });
   }
 });
 
@@ -60,7 +60,7 @@ function createWindow() {
   windowRef.on('closed', () => { windowRef = null; });
 }
 
-ipcMain.handle('mai-test:bootstrap', async () => {
+ipcMain.handle('astra-test:bootstrap', async () => {
   await backend.start();
   const [health, manifest, session] = await Promise.all([
     backend.getJson('/health'),
@@ -75,7 +75,7 @@ ipcMain.handle('mai-test:bootstrap', async () => {
   };
 });
 
-ipcMain.handle('mai-test:invoke', async (_event, payload = {}) => {
+ipcMain.handle('astra-test:invoke', async (_event, payload = {}) => {
   const method = String(payload.method || '');
   if (!ALLOWED_METHODS.has(method)) {
     throw new Error(`Testing client method is not allowed: ${method}`);

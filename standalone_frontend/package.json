@@ -1,8 +1,8 @@
 {
-  "name": "mai-standalone-frontend",
+  "name": "astra-standalone-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "Standalone Electron frontend for Mai's headless backend API.",
+  "description": "Standalone Electron frontend for AI Astra's headless backend API.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",

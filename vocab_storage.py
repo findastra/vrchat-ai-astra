@@ -1,4 +1,4 @@
-"""Compact vocabulary-ID storage for Mai n-gram context chains.
+"""Compact vocabulary-ID storage for AI Astra n-gram context chains.
 
 Repeated TEXT context tokens dominate SQLite B-tree size. This module keeps a
 lexicon of integer word IDs and an ID-keyed chain table so new evidence can be

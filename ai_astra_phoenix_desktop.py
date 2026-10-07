@@ -1,4 +1,4 @@
-﻿import sys, sqlite3, re, random, os, shutil, json, math, copy, threading, time, gc, subprocess, ast
+import sys, sqlite3, re, random, os, shutil, json, math, copy, threading, time, gc, subprocess, ast
 import multiprocessing as mp
 from multiprocessing import Pool, cpu_count
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -11,12 +11,12 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QTextCursor
 
-DB_FILE = 'mai_phoenix_brain.db'
-NN_MODEL_FILE = 'mai_phoenix_model.json'
-VOCAB_FILE = 'mai_phoenix_vocab.json'
-ATTENTION_FILE = 'mai_attention_weights.json'
-CONTEXT_SCORES_FILE = 'mai_context_scores.json'
-SEMANTIC_CLUSTERS_FILE = 'mai_semantic_clusters.json'
+DB_FILE = 'ai_astra_phoenix_brain.db'
+NN_MODEL_FILE = 'ai_astra_phoenix_model.json'
+VOCAB_FILE = 'ai_astra_phoenix_vocab.json'
+ATTENTION_FILE = 'ai_astra_attention_weights.json'
+CONTEXT_SCORES_FILE = 'ai_astra_context_scores.json'
+SEMANTIC_CLUSTERS_FILE = 'ai_astra_semantic_clusters.json'
 
 MAX_CONTEXT_SIZE = 8
 CONTEXT_LEVELS = [8, 6, 4, 2]
@@ -568,7 +568,7 @@ class GPUAccelerator:
 # Settings Manager
 class SettingsManager:
     def __init__(self):
-        self.settings_file = 'mai_settings.json'
+        self.settings_file = 'ai_astra_settings.json'
         self.default_settings = {
             'gpu_acceleration': True,
             'gpu_acceleration_enabled': False,
@@ -4973,31 +4973,31 @@ class ResponseLearningSystem:
         self.sentiment_learning = {}
         self.conversation_flow = []
         
-    def learn_from_response(self, user_input, mai_response, human_response):
-        """Learn from human response to Mai's output"""
+    def learn_from_response(self, user_input, ai_astra_response, human_response):
+        """Learn from human response to AI Astra's output"""
         try:
-            if not user_input or not mai_response or not human_response:
+            if not user_input or not ai_astra_response or not human_response:
                 return
                 
           
-            chain_key = f"{user_input.lower().strip()} -> {mai_response.lower().strip()}"
+            chain_key = f"{user_input.lower().strip()} -> {ai_astra_response.lower().strip()}"
             if chain_key not in self.response_chains:
                 self.response_chains[chain_key] = []
             
             self.response_chains[chain_key].append({
                 'human_response': human_response,
                 'timestamp': time.time(),
-                'context': self._extract_context(user_input, mai_response)
+                'context': self._extract_context(user_input, ai_astra_response)
             })
             
           
-            self._learn_response_patterns(mai_response, human_response)
+            self._learn_response_patterns(ai_astra_response, human_response)
             
           
-            self._learn_sentiment_context(user_input, mai_response, human_response)
+            self._learn_sentiment_context(user_input, ai_astra_response, human_response)
             
           
-            self._update_conversation_flow(user_input, mai_response, human_response)
+            self._update_conversation_flow(user_input, ai_astra_response, human_response)
             
           
             if len(self.response_chains[chain_key]) > 10:
@@ -5006,43 +5006,43 @@ class ResponseLearningSystem:
         except Exception as e:
             print(f"Response learning error: {e}")
     
-    def _extract_context(self, user_input, mai_response):
+    def _extract_context(self, user_input, ai_astra_response):
         """Extract contextual information"""
         try:
             return {
                 'user_length': len(user_input.split()),
-                'mai_length': len(mai_response.split()),
+                'ai_astra_length': len(ai_astra_response.split()),
                 'user_sentiment': self._analyze_sentiment(user_input),
-                'mai_sentiment': self._analyze_sentiment(mai_response),
-                'topics': self._extract_topics(user_input + " " + mai_response)
+                'ai_astra_sentiment': self._analyze_sentiment(ai_astra_response),
+                'topics': self._extract_topics(user_input + " " + ai_astra_response)
             }
         except:
             return {}
     
-    def _learn_response_patterns(self, mai_response, human_response):
+    def _learn_response_patterns(self, ai_astra_response, human_response):
         """Learn patterns from human responses"""
         try:
-            mai_words = mai_response.lower().split()
+            ai_astra_words = ai_astra_response.lower().split()
             human_words = human_response.lower().split()
             
           
-            for mai_word in mai_words:
-                if mai_word not in self.response_patterns:
-                    self.response_patterns[mai_word] = {}
+            for ai_astra_word in ai_astra_words:
+                if ai_astra_word not in self.response_patterns:
+                    self.response_patterns[ai_astra_word] = {}
                 
                 for human_word in human_words:
-                    if human_word not in self.response_patterns[mai_word]:
-                        self.response_patterns[mai_word][human_word] = 0
-                    self.response_patterns[mai_word][human_word] += 1
+                    if human_word not in self.response_patterns[ai_astra_word]:
+                        self.response_patterns[ai_astra_word][human_word] = 0
+                    self.response_patterns[ai_astra_word][human_word] += 1
                     
         except Exception as e:
             print(f"Pattern learning error: {e}")
     
-    def _learn_sentiment_context(self, user_input, mai_response, human_response):
+    def _learn_sentiment_context(self, user_input, ai_astra_response, human_response):
         """Learn emotional context of responses"""
         try:
             sentiment = self._analyze_sentiment(human_response)
-            context_key = f"{self._analyze_sentiment(user_input)}_{self._analyze_sentiment(mai_response)}"
+            context_key = f"{self._analyze_sentiment(user_input)}_{self._analyze_sentiment(ai_astra_response)}"
             
             if context_key not in self.sentiment_learning:
                 self.sentiment_learning[context_key] = []
@@ -5056,12 +5056,12 @@ class ResponseLearningSystem:
         except Exception as e:
             print(f"Sentiment learning error: {e}")
     
-    def _update_conversation_flow(self, user_input, mai_response, human_response):
+    def _update_conversation_flow(self, user_input, ai_astra_response, human_response):
         """Update conversation flow patterns"""
         try:
             self.conversation_flow.append({
                 'user': user_input,
-                'mai': mai_response,
+                'astra': ai_astra_response,
                 'human': human_response,
                 'timestamp': time.time()
             })
@@ -5107,7 +5107,7 @@ class ResponseLearningSystem:
         except:
             return []
     
-    def get_response_suggestions(self, user_input, mai_response):
+    def get_response_suggestions(self, user_input, ai_astra_response):
         """Get response suggestions based on learned patterns"""
         try:
             suggestions = []
@@ -5123,10 +5123,10 @@ class ResponseLearningSystem:
                         })
             
           
-            mai_words = mai_response.lower().split()
-            for mai_word in mai_words:
-                if mai_word in self.response_patterns:
-                    patterns = self.response_patterns[mai_word]
+            ai_astra_words = ai_astra_response.lower().split()
+            for ai_astra_word in ai_astra_words:
+                if ai_astra_word in self.response_patterns:
+                    patterns = self.response_patterns[ai_astra_word]
                     for human_word, count in sorted(patterns.items(), key=lambda x: x[1], reverse=True)[:3]:
                         suggestions.append({
                             'response': f"Response involving '{human_word}'",
@@ -5306,11 +5306,11 @@ class TopicDetectionSystem:
                     return True
             
           
-            if 'user_input' in context and 'mai_response' in context:
+            if 'user_input' in context and 'ai_astra_response' in context:
                 user_words = set(context['user_input'].lower().split())
-                mai_words = set(context['mai_response'].lower().split())
+                ai_astra_words = set(context['ai_astra_response'].lower().split())
                 
-                if topic in user_words and topic not in mai_words:
+                if topic in user_words and topic not in ai_astra_words:
                     return True
             
             return False
@@ -5342,10 +5342,10 @@ class TopicDetectionSystem:
         except:
             return {'total_topics_tracked': 0, 'rare_topics': 0, 'medium_topics': 0}
 
-class MaiApp(QMainWindow):
+class AIAstraApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        print("Initializing Mai's Memory Optimized Edition...")
+        print("Initializing AI Astra's Memory Optimized Edition...")
         self.brain = HybridBrain(DB_FILE)
         self.self_train_worker = SelfTrainWorker(self.brain)
         self.self_train_worker.log_updated.connect(self.update_self_train_log)
@@ -5353,12 +5353,12 @@ class MaiApp(QMainWindow):
       
         self.performance_monitor = PerformanceMonitor()
         self.correction_context = ""
-        self.correction_mai_response = ""
+        self.correction_ai_astra_response = ""
         self.file_training_worker = None
         
         print("Setting up UI...")
       
-        self.setWindowTitle("Mai Generative v4.5 - Consolidated Build")
+        self.setWindowTitle("AI Astra Generative v4.5 - Consolidated Build")
         self.setGeometry(100, 100, 950, 800)
         self.setStyleSheet("""
             QMainWindow { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F0F0, stop:1 #E0E0E0); }
@@ -5481,7 +5481,7 @@ class MaiApp(QMainWindow):
         self.create_brain_tab()
         self.create_settings_tab()
         
-        print("Mai Smart GPU Acceleration Build v6.1 is ready!")
+        print("AI Astra Smart GPU Acceleration Build v6.1 is ready!")
 
     def create_conversation_tab(self):
         tab = QWidget()
@@ -5503,7 +5503,7 @@ class MaiApp(QMainWindow):
         top_layout.setContentsMargins(15, 5, 15, 5)
         top_layout.setSpacing(15)
         
-        self.status_label = QLabel("Mai AI v6.3 - Enhanced Memory System")
+        self.status_label = QLabel("AI Astra AI v6.3 - Enhanced Memory System")
         self.status_label.setStyleSheet("color: white; font-weight: bold; font-size: 13px;")
         
         self.quality_label = QLabel("Quality: Initializing...")
@@ -5703,7 +5703,7 @@ class MaiApp(QMainWindow):
       
         welcome_message = '''
         <div style="text-align: center; padding: 25px; background: #ECF0F1; border: 1px solid #BDC3C7; border-radius: 10px; margin: 15px; color: #2C3E50;">
-            <h2 style="margin-bottom: 15px; font-size: 24px; color: #2C3E50;">Welcome to Mai AI v6.3 - SGM Architecture</h2>
+            <h2 style="margin-bottom: 15px; font-size: 24px; color: #2C3E50;">Welcome to AI Astra AI v6.3 - SGM Architecture</h2>
             <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.5;">I'm a <b>Statistical Generative Model (SGM)</b> - a tensor-free alternative to traditional AI architectures.</p>
             
             <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #BDC3C7;">
@@ -5732,7 +5732,7 @@ class MaiApp(QMainWindow):
         
         file_group = QGroupBox("Manual Teaching (Memory Optimized for 2M+ Word Files)")
         file_layout = QVBoxLayout(file_group)
-        file_layout.addWidget(QLabel("<p>Select .txt files to teach Mai statistical patterns.<br/><b>MEMORY OPTIMIZED:</b> Handles 2M+ word files with RAM monitoring and chunked processing!</p>"))
+        file_layout.addWidget(QLabel("<p>Select .txt files to teach AI Astra statistical patterns.<br/><b>MEMORY OPTIMIZED:</b> Handles 2M+ word files with RAM monitoring and chunked processing!</p>"))
         select_layout = QHBoxLayout()
         self.file_input_label = QLabel("No files selected.")
         file_button = QPushButton("Select Files...")
@@ -5756,12 +5756,12 @@ class MaiApp(QMainWindow):
         convo_layout.addWidget(self.correction_status)
         self.btn_get_prompt = QPushButton("Get New Prompt"); self.btn_get_prompt.clicked.connect(self.get_new_correction_prompt)
         convo_layout.addWidget(self.btn_get_prompt)
-        self.correction_user_input = QLineEdit(); self.correction_user_input.setPlaceholderText("Your reply to Mai...")
-        self.btn_get_mai_response = QPushButton("Generate Mai's Response"); self.btn_get_mai_response.clicked.connect(self.get_correction_response)
-        user_reply_layout = QHBoxLayout(); user_reply_layout.addWidget(self.correction_user_input); user_reply_layout.addWidget(self.btn_get_mai_response)
+        self.correction_user_input = QLineEdit(); self.correction_user_input.setPlaceholderText("Your reply to AI Astra...")
+        self.btn_get_ai_astra_response = QPushButton("Generate AI Astra's Response"); self.btn_get_ai_astra_response.clicked.connect(self.get_correction_response)
+        user_reply_layout = QHBoxLayout(); user_reply_layout.addWidget(self.correction_user_input); user_reply_layout.addWidget(self.btn_get_ai_astra_response)
         convo_layout.addLayout(user_reply_layout)
-        self.correction_mai_output = QLabel("<i>Mai's generated response will appear here.</i>"); self.correction_mai_output.setWordWrap(True)
-        convo_layout.addWidget(self.correction_mai_output)
+        self.correction_ai_astra_output = QLabel("<i>AI Astra's generated response will appear here.</i>"); self.correction_ai_astra_output.setWordWrap(True)
+        convo_layout.addWidget(self.correction_ai_astra_output)
         self.correction_feedback_input = QLineEdit(); self.correction_feedback_input.setPlaceholderText("Type a better response here...")
         feedback_buttons_layout = QHBoxLayout()
         self.btn_encourage = QPushButton("Encourage Pattern"); self.btn_encourage.clicked.connect(self.encourage_response)
@@ -5775,7 +5775,7 @@ class MaiApp(QMainWindow):
 
         self_train_group = QGroupBox("Autonomous Self-Training (Memory Optimized)")
         self_train_layout = QVBoxLayout(self_train_group)
-        self_train_layout.addWidget(QLabel("<p>Mai will talk to a clone using statistical generation with memory monitoring.</p>"))
+        self_train_layout.addWidget(QLabel("<p>AI Astra will talk to a clone using statistical generation with memory monitoring.</p>"))
         self.self_train_button = QPushButton("Begin Self-Training"); self.self_train_button.setCheckable(True)
         self.self_train_button.clicked.connect(self.toggle_self_train)
         self_train_layout.addWidget(self.self_train_button)
@@ -5793,7 +5793,7 @@ class MaiApp(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout(tab)
       
-        layout.addWidget(QLabel("<h2>Mai's Smart GPU Acceleration Brain v6.1 (Advanced Build)</h2>"))
+        layout.addWidget(QLabel("<h2>AI Astra's Smart GPU Acceleration Brain v6.1 (Advanced Build)</h2>"))
         
         controls_layout = QHBoxLayout()
         btn_view_brain = QPushButton("View Statistical Patterns"); btn_view_brain.clicked.connect(self.view_brain_data)
@@ -5825,7 +5825,7 @@ class MaiApp(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         
-        layout.addWidget(QLabel("<h2>Mai AI Settings & GPU Acceleration</h2>"))
+        layout.addWidget(QLabel("<h2>AI Astra AI Settings & GPU Acceleration</h2>"))
         
       
         self.gpu_group = QGroupBox("GPU Acceleration")
@@ -6205,7 +6205,7 @@ class MaiApp(QMainWindow):
         self.tabs.addTab(tab, "Settings")
     
     def launch_brain_viewer(self):
-        viewer_script = "mai_brain_viewer.py"
+        viewer_script = "ai_astra_brain_viewer.py"
         python_executable = sys.executable
         if not os.path.exists(viewer_script):
             QMessageBox.critical(self, "Error", f"Viewer script '{viewer_script}' not found. It should be in the same directory.")
@@ -6278,7 +6278,7 @@ class MaiApp(QMainWindow):
         response = self.brain.generate_response(user_text)
         quality_score = self.brain._calculate_response_quality(response, user_text) if hasattr(self.brain, '_calculate_response_quality') else 0.5
         
-        self.add_message("Mai", response, reinforce=True, quality=quality_score)
+        self.add_message("AI Astra", response, reinforce=True, quality=quality_score)
         self.update_status_labels()
 
     def add_message(self, sender, text, reinforce=False, quality=None):
@@ -6313,7 +6313,7 @@ class MaiApp(QMainWindow):
                 <div style="display: inline-block; max-width: 75%;">
                     <div style="background: #F8F9FA; color: #2C3E50; padding: 12px 16px; border-radius: 18px 18px 18px 4px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 13px; line-height: 1.4; word-wrap: break-word; border: 1px solid #E9ECEF; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 4px;">
                         <div style="font-weight: 600; color: #34495E; margin-bottom: 6px; font-size: 12px; border-bottom: 1px solid #E9ECEF; padding-bottom: 4px;">
-                            Mai{quality_indicator}
+                            AI Astra{quality_indicator}
                         </div>
                         <div style="color: #2C3E50; font-size: 13px; line-height: 1.5;">
                             {text}
@@ -6740,17 +6740,17 @@ class MaiApp(QMainWindow):
 
     def reset_correction_ui(self, is_prompt_state=True):
         self.correction_user_input.setEnabled(not is_prompt_state)
-        self.btn_get_mai_response.setEnabled(not is_prompt_state)
+        self.btn_get_ai_astra_response.setEnabled(not is_prompt_state)
         self.btn_encourage.setEnabled(False); self.btn_discourage.setEnabled(False); self.btn_teach_correction.setEnabled(False)
         self.correction_feedback_input.setEnabled(False)
         if is_prompt_state:
-            self.correction_user_input.clear(); self.correction_mai_output.setText("<i>Your reply will trigger Mai's generated response.</i>")
+            self.correction_user_input.clear(); self.correction_ai_astra_output.setText("<i>Your reply will trigger AI Astra's generated response.</i>")
             self.correction_feedback_input.clear()
 
     def get_new_correction_prompt(self):
         prompt = self.brain.generate_response()
         self.correction_context = prompt
-        self.correction_status.setText(f'<b>Mai says (Memory Optimized):</b> "{prompt}"')
+        self.correction_status.setText(f'<b>AI Astra says (Memory Optimized):</b> "{prompt}"')
         self.reset_correction_ui(is_prompt_state=False)
 
     def get_correction_response(self):
@@ -6778,21 +6778,21 @@ class MaiApp(QMainWindow):
         memory_usage = memory_manager.get_memory_usage_mb()
         quality_text = f" (Quality: {quality_score:.2f}, Semantic: {semantic_coherence:.2f}, Memory: {memory_usage:.1f}MB)"
         
-        self.correction_mai_response = response
-        self.correction_mai_output.setText(f'<b>Mai\'s memory optimized response:</b> "{response}"{quality_text}<br/><small>{gen_stats}</small>')
+        self.correction_ai_astra_response = response
+        self.correction_ai_astra_output.setText(f'<b>AI Astra\'s memory optimized response:</b> "{response}"{quality_text}<br/><small>{gen_stats}</small>')
         self.btn_encourage.setEnabled(True); self.btn_discourage.setEnabled(True)
         self.btn_teach_correction.setEnabled(True); self.correction_feedback_input.setEnabled(True)
 
     def encourage_response(self):
-        full_sentence = self.correction_context + " " + self.correction_mai_response
+        full_sentence = self.correction_context + " " + self.correction_ai_astra_response
         self.brain.apply_feedback(full_sentence, is_positive=True)
-        QMessageBox.information(self, "Pattern Reinforcement", "Mai's generated response pattern has been strongly reinforced.")
+        QMessageBox.information(self, "Pattern Reinforcement", "AI Astra's generated response pattern has been strongly reinforced.")
         self.reset_correction_ui()
 
     def discourage_response(self):
-        full_sentence = self.correction_context + " " + self.correction_mai_response
+        full_sentence = self.correction_context + " " + self.correction_ai_astra_response
         self.brain.apply_feedback(full_sentence, is_positive=False)
-        QMessageBox.information(self, "Pattern Discouragement", "Mai's generated response pattern has been discouraged.")
+        QMessageBox.information(self, "Pattern Discouragement", "AI Astra's generated response pattern has been discouraged.")
         self.reset_correction_ui()
 
     def teach_correction(self):
@@ -6800,12 +6800,12 @@ class MaiApp(QMainWindow):
         if not correction:
             QMessageBox.warning(self, "Empty Correction", "Please type a corrected response first."); return
         
-        bad_sentence = self.correction_context + " " + self.correction_mai_response
+        bad_sentence = self.correction_context + " " + self.correction_ai_astra_response
         good_sentence = self.correction_context + " " + correction
         self.brain.apply_feedback(bad_sentence, is_positive=False)
         self.brain.apply_feedback(good_sentence, is_positive=True)
 
-        QMessageBox.information(self, "Pattern Correction", "Mai has learned your corrected response as a statistical pattern.")
+        QMessageBox.information(self, "Pattern Correction", "AI Astra has learned your corrected response as a statistical pattern.")
         self.reset_correction_ui()
 
     def view_brain_data(self):
@@ -6834,7 +6834,7 @@ class MaiApp(QMainWindow):
             return
         
         if not data: 
-            self.brain_view.setText("The memory optimized brain is empty. Teach Mai with text files using background training."); return
+            self.brain_view.setText("The memory optimized brain is empty. Teach AI Astra with text files using background training."); return
         
         header = "MEMORY OPTIMIZED BRAIN DATA - STRONGEST STATISTICAL PATTERNS\n"
         header += "NO PRESET RESPONSES - ALL GENERATED FROM LEARNED PATTERNS\n"
@@ -6958,7 +6958,7 @@ class MaiApp(QMainWindow):
         cluster_strength = self.brain.semantic_memory.cluster_strength
         
         if not clusters:
-            self.brain_view.setText("No semantic clusters formed yet. Teach Mai more content using memory optimized training."); return
+            self.brain_view.setText("No semantic clusters formed yet. Teach AI Astra more content using memory optimized training."); return
         
         header = "MEMORY OPTIMIZED SEMANTIC MEMORY CLUSTERS\n"
         header += "NO PRESET RESPONSES - STATISTICAL CONCEPT RELATIONSHIPS\n"
@@ -7315,7 +7315,7 @@ class MaiApp(QMainWindow):
 
     def import_brain(self):
         reply = QMessageBox.question(self, "Import Memory Optimized Brain", 
-                                   "This will overwrite Mai's current brain and require a restart. Are you sure?")
+                                   "This will overwrite AI Astra's current brain and require a restart. Are you sure?")
         if reply == QMessageBox.StandardButton.Yes:
             file_path, _ = QFileDialog.getOpenFileName(self, "Import Memory Optimized Brain", "", "Database Files (*.db)")
             if file_path:
@@ -7372,7 +7372,7 @@ class MaiApp(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    window = MaiApp()
+    window = AIAstraApp()
     window.show()
     sys.exit(app.exec())
 
@@ -7391,7 +7391,7 @@ if __name__ == '__main__':
             cluster_count = len(temp_brain.semantic_memory.clusters)
             gen_stats = temp_brain.get_generation_stats()
             memory_usage = memory_manager.get_memory_usage_mb()
-            print(f"Smart GPU acceleration initial learning complete. Mai v6.1 is ready.")
+            print(f"Smart GPU acceleration initial learning complete. AI Astra v6.1 is ready.")
             print(f"Clusters: {cluster_count}")
             print(f"{gen_stats}")
             print(f"Memory usage: {memory_usage:.1f}MB")

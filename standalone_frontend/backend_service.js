@@ -82,11 +82,11 @@ class BackendService extends EventEmitter {
   constructor(options = {}) {
     super();
     this.host = options.host || DEFAULT_HOST;
-    this.workspaceRoot = path.resolve(options.workspaceRoot || process.env.MAI_WORKSPACE_ROOT || path.resolve(__dirname, '..', '..'));
-    this.maiRoot = path.resolve(options.maiRoot || process.env.MAI_ROOT || path.resolve(__dirname, '..'));
-    this.stateDir = options.stateDir ? path.resolve(options.stateDir) : (process.env.MAI_STATE_DIR || '');
+    this.workspaceRoot = path.resolve(options.workspaceRoot || process.env.AI_ASTRA_WORKSPACE_ROOT || path.resolve(__dirname, '..', '..'));
+    this.aiAstraRoot = path.resolve(options.aiAstraRoot || process.env.AI_ASTRA_ROOT || path.resolve(__dirname, '..'));
+    this.stateDir = options.stateDir ? path.resolve(options.stateDir) : (process.env.AI_ASTRA_STATE_DIR || '');
     const defaultPython = process.platform === 'win32' ? 'py' : 'python3';
-    this.pythonPath = stripOuterQuotes(options.pythonPath || process.env.MAI_BACKEND_PYTHON || defaultPython);
+    this.pythonPath = stripOuterQuotes(options.pythonPath || process.env.AI_ASTRA_BACKEND_PYTHON || defaultPython);
     this.authToken = String(options.authToken || crypto.randomBytes(32).toString('hex'));
     this.requestTimeoutMs = Number(options.requestTimeoutMs || REQUEST_TIMEOUT_MS);
     this.startupTimeoutMs = Number(options.startupTimeoutMs || STARTUP_TIMEOUT_MS);
@@ -113,8 +113,8 @@ class BackendService extends EventEmitter {
       port: this.port,
       base_url: this.baseUrl,
       workspace_root: this.workspaceRoot,
-      mai_root: this.maiRoot,
-      conversations_dir: path.join(this.maiRoot, 'conversations'),
+      ai_astra_root: this.aiAstraRoot,
+      conversations_dir: path.join(this.aiAstraRoot, 'conversations'),
       docs_root: path.join(this.workspaceRoot, 'docs'),
       atlas_note: path.join(this.workspaceRoot, 'docs', 'SGM Codebase Atlas.md'),
       api_note: path.join(this.workspaceRoot, 'docs', 'SGM', '12 Backend API and Transport.md'),
@@ -200,11 +200,11 @@ class BackendService extends EventEmitter {
 
     const childEnv = {
       ...process.env,
-      MAI_BACKEND_AUTH_TOKEN: this.authToken,
+      AI_ASTRA_BACKEND_AUTH_TOKEN: this.authToken,
       PYTHONIOENCODING: 'utf-8',
     };
     if (this.stateDir) {
-      childEnv.MAI_STATE_DIR = this.stateDir;
+      childEnv.AI_ASTRA_STATE_DIR = this.stateDir;
     }
     const child = spawn(spawnConfig.command, spawnConfig.args, {
       cwd: this.workspaceRoot,
@@ -277,7 +277,7 @@ class BackendService extends EventEmitter {
       await delay(250);
     }
 
-    throw lastError || new Error('Timed out waiting for Mai backend transport to become ready.');
+    throw lastError || new Error('Timed out waiting for AI Astra backend transport to become ready.');
   }
 
   requestJson(method, routePath, payload, options = {}) {
@@ -294,7 +294,7 @@ class BackendService extends EventEmitter {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
             'Content-Length': body ? Buffer.byteLength(body) : 0,
-            'X-Mai-Token': this.authToken,
+            'X-AIAstra-Token': this.authToken,
           },
         },
         (response) => {

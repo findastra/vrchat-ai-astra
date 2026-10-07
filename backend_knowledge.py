@@ -20,8 +20,8 @@ LEXICON_BOOTSTRAP = [
     ('dislikes', 'relation_trigger', 'avoids', 0.9, 'medium', 'Negative preference relation trigger.'),
     ('hates', 'relation_trigger', 'avoids', 0.85, 'medium', 'Negative preference relation trigger.'),
     ('can', 'relation_trigger', 'capable_of', 0.8, 'medium', 'Capability relation trigger.'),
-    ('mai', 'entity_alias', 'mai', 1.0, 'medium', 'Mai self reference.'),
-    ('phoenix', 'entity_alias', 'mai', 0.8, 'medium', 'Mai self reference.'),
+    ('astra', 'entity_alias', 'astra', 1.0, 'medium', 'AI Astra self reference.'),
+    ('phoenix', 'entity_alias', 'astra', 0.8, 'medium', 'AI Astra self reference.'),
     ('i', 'self_reference', 'speaker', 1.0, 'high', 'Speaker self reference.'),
     ('you', 'self_reference', 'listener', 1.0, 'high', 'Listener reference.'),
 ]
@@ -166,7 +166,7 @@ GRAPH_REVERSE_RELATION_LABELS = {
 
 
 class KnowledgeStore:
-    """Persistent concept, fact, provenance, and identity layer for Mai."""
+    """Persistent concept, fact, provenance, and identity layer for AI Astra."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -293,7 +293,7 @@ class KnowledgeStore:
                 source_label='conversation_bot',
                 base_confidence=bot_confidence,
                 editable='high',
-                speaker='mai',
+                speaker='astra',
             )
             total_candidates += int(bot_result.get('candidate_count', 0))
             total_inserted += int(bot_result.get('fact_count', 0))
@@ -419,7 +419,7 @@ class KnowledgeStore:
             if object_kind == 'concept' and len(object_text.split()) > 5:
                 object_kind = 'value'
             confidence = min(0.95, max(0.2, base_confidence + float(pattern.get('confidence_bonus', 0.0)) - hedge_penalty))
-            concept_type = 'agent' if subject in {'mai', 'current_user'} else 'concept'
+            concept_type = 'agent' if subject in {'astra', 'current_user'} else 'concept'
             candidates.append({
                 'subject': subject,
                 'relation_type': pattern['relation_type'],
@@ -524,7 +524,7 @@ class KnowledgeStore:
                 confidence=confidence,
             )
 
-        if subject_name == 'mai' and relation_type in {'has_trait', 'prefers', 'avoids', 'role', 'capable_of'}:
+        if subject_name == 'astra' and relation_type in {'has_trait', 'prefers', 'avoids', 'role', 'capable_of'}:
             self._upsert_identity_trait(relation_type, object_text, confidence, editable, now)
 
         truth_fact_table = getattr(self.brain, 'truth_fact_table', None)
@@ -681,7 +681,7 @@ class KnowledgeStore:
             facts.append({
                 'fact_key': row[0],
                 'subject': subject_name,
-                'subject_type': 'agent' if subject_name in {'mai', 'current_user'} else 'concept',
+                'subject_type': 'agent' if subject_name in {'astra', 'current_user'} else 'concept',
                 'relation_type': row[2],
                 'object': object_name or row[4],
                 'object_kind': row[5],
@@ -927,7 +927,7 @@ class KnowledgeStore:
                 'source_count': int(row[7] or 0),
                 'first_seen': self._safe_float(row[8], 0.0),
                 'last_seen': self._safe_float(row[9], 0.0),
-                'summary': self._summarize_fact('Mai', row[1], row[2]),
+                'summary': self._summarize_fact('AI Astra', row[1], row[2]),
             }
             if not self._is_reasoning_text_usable(trait_row['summary']):
                 continue
@@ -976,7 +976,7 @@ class KnowledgeStore:
                 continue
             bot_quality = self._safe_float(entry.get('quality'), 0.5)
             bot_confidence = min(0.88, max(0.46, 0.4 + (bot_quality * 0.38)))
-            for candidate in self.extract_fact_candidates(bot_text, speaker='mai', base_confidence=bot_confidence):
+            for candidate in self.extract_fact_candidates(bot_text, speaker='astra', base_confidence=bot_confidence):
                 candidate_key = self._fact_key(candidate['subject'], candidate['relation_type'], candidate['object'], candidate['object_kind'])
                 if candidate_key in entry_seen:
                     continue
@@ -1018,7 +1018,7 @@ class KnowledgeStore:
             score = overlap + self._safe_float(concept.get('confidence'), 0.5) + self._safe_float(concept.get('importance'), 0.5)
             if not self._is_clean_concept_surface(name):
                 score -= 1.15
-            if self._query_targets_mai(normalized_query) and name == 'mai':
+            if self._query_targets_ai_astra(normalized_query) and name == 'astra':
                 score += 1.4
             if intent in {'definition', 'self_description'} and len(name.split()) > 4:
                 score -= min(0.9, (len(name.split()) - 4) * 0.18)
@@ -1105,7 +1105,7 @@ class KnowledgeStore:
             'with',
             'your',
             'you',
-            'mai',
+            'astra',
             'phoenix',
             'sgm',
             'system',
@@ -1119,7 +1119,7 @@ class KnowledgeStore:
         }
         for concept_name in query_profile.get('concept_names', [])[:4]:
             normalized_name = self._normalize_text(concept_name)
-            if normalized_name in {'mai', 'phoenix', 'sgm', 'sgm system'}:
+            if normalized_name in {'astra', 'phoenix', 'sgm', 'sgm system'}:
                 continue
             focus_terms.update(
                 token for token in normalized_name.split()
@@ -1148,7 +1148,7 @@ class KnowledgeStore:
                 'avoids': -0.65,
             }
             bias += bias_map.get(relation, 0.0)
-            if subject == 'mai':
+            if subject == 'astra':
                 bias += 0.25
             if requests_preferences and relation in {'prefers', 'avoids'}:
                 bias += 1.0
@@ -1184,7 +1184,7 @@ class KnowledgeStore:
                 'part_of': -0.25,
             }
             bias += bias_map.get(relation, 0.0)
-            if subject == 'mai':
+            if subject == 'astra':
                 bias += 0.2
         return bias
 
@@ -1416,7 +1416,7 @@ class KnowledgeStore:
         focus_terms = self._build_query_focus_terms(query_profile)
         fact_focus_terms = {
             term for term in fact_terms
-            if term not in {'mai', 'phoenix', 'sgm', 'system'}
+            if term not in {'astra', 'phoenix', 'sgm', 'system'}
         }
         topical_overlap = len(focus_terms.intersection(fact_focus_terms))
         concept_match = 0.0
@@ -1447,9 +1447,9 @@ class KnowledgeStore:
         intent = str(query_profile.get('intent', '') or '').strip().lower()
         if focus_terms:
             topical_bonus += min(0.85, topical_overlap * 0.32)
-            if intent == 'explanation' and topical_overlap <= 0 and subject in {'mai', 'phoenix'}:
+            if intent == 'explanation' and topical_overlap <= 0 and subject in {'astra', 'phoenix'}:
                 topical_bonus -= 1.15
-            elif intent in {'answer', 'guidance'} and topical_overlap <= 0 and subject in {'mai', 'phoenix'}:
+            elif intent in {'answer', 'guidance'} and topical_overlap <= 0 and subject in {'astra', 'phoenix'}:
                 topical_bonus -= 0.45
         surface_penalty = self._fact_surface_penalty(fact, query_profile)
         consistency_penalty = 0.0
@@ -1490,7 +1490,7 @@ class KnowledgeStore:
             penalty += 1.45
         if not self._is_clean_concept_surface(subject):
             penalty += 1.35
-        if intent in {'definition', 'self_description'} and subject not in {'mai', 'phoenix'} and len(subject.split()) > 4:
+        if intent in {'definition', 'self_description'} and subject not in {'astra', 'phoenix'} and len(subject.split()) > 4:
             penalty += min(0.8, (len(subject.split()) - 4) * 0.15)
         if intent in {'definition', 'self_description'} and relation in {'is_a', 'part_of', 'role', 'belongs_to'} and object_kind != 'concept':
             penalty += 0.85
@@ -1514,7 +1514,7 @@ class KnowledgeStore:
                     str(fact.get('object', '') or ''),
                 ])
             ).split()
-            if term not in {'mai', 'phoenix', 'sgm', 'system'}
+            if term not in {'astra', 'phoenix', 'sgm', 'system'}
         }
         return bool(focus_terms.intersection(fact_terms))
 
@@ -1539,7 +1539,7 @@ class KnowledgeStore:
 
         identity_traits: list[dict[str, Any]] = []
         lower_query = self._normalize_text(query)
-        if self._query_targets_mai(lower_query):
+        if self._query_targets_ai_astra(lower_query):
             identity_traits = self.get_identity_traits(limit=5).get('rows', [])
 
         structure = self._choose_response_structure(intent, preferred_facts)
@@ -1722,7 +1722,7 @@ class KnowledgeStore:
             'text': summary,
             'fact_key': str(trait.get('trait_key', '') or ''),
             'relation_type': str(trait.get('relation_type', '') or ''),
-            'subject': 'mai',
+            'subject': 'astra',
             'object': str(trait.get('trait_value', '') or ''),
             'confidence_profile': confidence_profile,
             'provenance': provenance,
@@ -1755,9 +1755,9 @@ class KnowledgeStore:
         if intent == 'definition':
             return 'Answer with a concise definition first, then ground it with durable facts.'
         if intent == 'self_preference':
-            return 'Answer Mai-related preference questions directly, then support them with one durable preference or habit.'
+            return 'Answer AI Astra-related preference questions directly, then support them with one durable preference or habit.'
         if intent == 'self_description':
-            return 'Answer as Mai directly, then support the answer with durable self-traits or facts.'
+            return 'Answer as AI Astra directly, then support the answer with durable self-traits or facts.'
         if intent == 'explanation':
             return 'Explain the core idea first, then add supporting cause, relation, or context claims.'
         if structure == 'direct_answer_then_steps':
@@ -1891,7 +1891,7 @@ class KnowledgeStore:
         trimmed = lower_text.rstrip('.!?').strip()
         if trimmed.endswith(('part of', 'because of', 'instead of', 'rather than', 'such as')):
             return False
-        if padded_text.count(' mai is ') > 1 or padded_text.count(' mai prefers ') > 1:
+        if padded_text.count(' astra is ') > 1 or padded_text.count(' astra prefers ') > 1:
             return False
         stray_letters = [token for token in re.findall(r'\b[a-zA-Z]\b', lower_text) if token not in {'a', 'i'}]
         if len(stray_letters) > 1:
@@ -2302,7 +2302,7 @@ class KnowledgeStore:
             relation_type,
             object_value,
             object_kind=object_kind,
-            concept_type='agent' if subject_name in {'mai', 'current_user'} else 'concept',
+            concept_type='agent' if subject_name in {'astra', 'current_user'} else 'concept',
             source_type='episodic_consolidation',
             source_label=source_label,
             confidence=confidence,
@@ -2365,7 +2365,7 @@ class KnowledgeStore:
                     phrase_quality[phrase] = max(phrase_quality.get(phrase, 0.0), quality)
             for topic in entry.get('topics', [])[:4]:
                 normalized_topic = self._normalize_text(str(topic or ''))
-                if not normalized_topic or normalized_topic in {'mai', 'current_user'}:
+                if not normalized_topic or normalized_topic in {'astra', 'current_user'}:
                     continue
                 topic_counts[normalized_topic] = topic_counts.get(normalized_topic, 0) + 1
                 topic_quality[normalized_topic] = max(topic_quality.get(normalized_topic, 0.0), quality)
@@ -2497,17 +2497,17 @@ class KnowledgeStore:
     def _canonicalize_concept(self, text: str, speaker: str = 'external') -> str:
         normalized = self._normalize_text(text)
         if normalized in {'i', 'me', 'my', 'myself'}:
-            if speaker == 'mai':
-                return 'mai'
+            if speaker == 'astra':
+                return 'astra'
             if speaker == 'user':
                 return 'current_user'
         if normalized in {'you', 'your', 'yourself'}:
-            if speaker == 'mai':
+            if speaker == 'astra':
                 return 'current_user'
             if speaker == 'user':
-                return 'mai'
-        if normalized in {'mai', 'mai phoenix', 'phoenix'}:
-            return 'mai'
+                return 'astra'
+        if normalized in {'astra', 'astra phoenix', 'phoenix'}:
+            return 'astra'
         if normalized in {'user', 'the user'}:
             return 'current_user'
         tokens = [token for token in normalized.split() if token not in STOP_WORDS]
@@ -2579,22 +2579,22 @@ class KnowledgeStore:
             return 'explanation'
         if normalized.startswith(('can ', 'could ', 'should ', 'would ', 'help me ')):
             return 'guidance'
-        if self._query_targets_mai(normalized) and self._query_requests_preferences(normalized):
+        if self._query_targets_ai_astra(normalized) and self._query_requests_preferences(normalized):
             return 'self_preference'
         if normalized.startswith(('what is ', 'what are ', 'who is ', 'who are ')):
-            if self._query_targets_mai(normalized):
+            if self._query_targets_ai_astra(normalized):
                 return 'self_description'
             return 'definition'
-        if self._query_targets_mai(normalized):
+        if self._query_targets_ai_astra(normalized):
             return 'self_description'
         return 'answer'
 
-    def _query_targets_mai(self, normalized_query: str) -> bool:
+    def _query_targets_ai_astra(self, normalized_query: str) -> bool:
         normalized_query = str(normalized_query or '').strip()
         if not normalized_query:
             return False
         tokens = set(normalized_query.split())
-        if 'mai' in tokens or 'phoenix' in tokens:
+        if 'astra' in tokens or 'phoenix' in tokens:
             return True
         self_reference_phrases = (
             'who are you',
@@ -2643,7 +2643,7 @@ class KnowledgeStore:
         if intent == 'guidance':
             return 'Start with the direct answer, then add one practical supporting point.'
         if intent == 'self_preference':
-            return "Answer with Mai's preference directly, then add one short supporting detail if it is durable."
+            return "Answer with AI Astra's preference directly, then add one short supporting detail if it is durable."
         if intent == 'self_description' and identity_traits:
             return 'Start with a direct self-description, then support it with one or two durable traits or facts.'
         if supporting_facts:
@@ -2677,8 +2677,8 @@ class KnowledgeStore:
         normalized = self._normalize_text(value)
         if not normalized:
             return ''
-        if normalized == 'mai':
-            return 'Mai'
+        if normalized == 'astra':
+            return 'AI Astra'
         if normalized == 'current_user':
             return 'Current user'
 
