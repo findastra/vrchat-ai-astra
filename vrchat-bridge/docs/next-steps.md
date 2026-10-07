@@ -2,7 +2,7 @@
 
 Claude, 2026-09-30.
 
-## Next smallest live test (chatbox only; no Mai, no avatar change)
+## Next smallest live test (chatbox only; no AI Astra, no avatar change)
 
 1. Owner opens VRChat in desktop mode, alone in a private or home instance, with any avatar. In the Action Menu, go to Options > OSC and enable it.
 2. `& $py bridge.py preview "Astra bridge test ✨"` shows the packet, then `& $py bridge.py queue "Astra bridge test ✨"`.
@@ -11,9 +11,9 @@ Claude, 2026-09-30.
 
 Before step 2, run the Windows test suite once with the bundled Python (see README). Tests have only run on Linux so far.
 
-## Test after that: Mai health only
+## Test after that: AI Astra health only
 
-`& $py bridge.py status --endpoint http://127.0.0.1:<port>` once the owner confirms where Mai runs. `status` doesn't change Mai's state. `ask` does (generate_response can write conversation/learning state), so the first `ask` needs the owner's go-ahead and ideally a disposable Mai state directory (`MAI_STATE_DIR`), not the trained brain.
+`& $py bridge.py status --endpoint http://127.0.0.1:<port>` once the owner confirms where AI Astra runs. `status` doesn't change AI Astra's state. `ask` does (generate_response can write conversation/learning state), so the first `ask` needs the owner's go-ahead and ideally a disposable AI Astra state directory (`AI_ASTRA_STATE_DIR`), not the trained brain.
 
 ## Open decisions for the owner
 
@@ -24,8 +24,8 @@ Avatar base (decides Meep vs Poppy)
 - Who wears Astra in VRChat? OSC talks to the VRChat client on this PC, so Astra needs her own logged-in client and account (the owner creates or signs in to it). Otherwise it's just the owner wearing Astra.
 
 Runtime
-- Which Mai instance is "Astra's brain": the live one Mai runs, or a separate copy from `maimain.zip` with its own `MAI_STATE_DIR`? Talking to the live one changes her state.
-- Where it runs (this PC?), its port, and whether it uses `MAI_BACKEND_AUTH_TOKEN`.
+- Which AI Astra instance is "Astra's brain": the live one AI Astra runs, or a separate copy from `maimain.zip` with its own `AI_ASTRA_STATE_DIR`? Talking to the live one changes her state.
+- Where it runs (this PC?), its port, and whether it uses `AI_ASTRA_BACKEND_AUTH_TOKEN`.
 - Who reviews replies before `queue`: the owner, or Astra in Codex with the owner watching?
 
 Voice
@@ -53,5 +53,5 @@ Avatar
 
 1. Package scans haven't been run: Meep (docs/meep-inventory.md) and both Poppy packages (docs/poppy-inventory.md). They need a shell on this computer, and Claude's session only has file access here.
 1a. Meep license verification hasn't happened yet. It happens when the owner opens "CLICK ME - MEEP" in a new, separate VCC Avatar project (Unity 2022.3.22f1) and enters her key.
-2. Mai's live endpoint and route are unknown. No Mai response has been received.
+2. AI Astra's live endpoint and route are unknown. No AI Astra response has been received.
 3. No live VRChat observation yet.

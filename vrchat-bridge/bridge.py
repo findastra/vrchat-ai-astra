@@ -1,6 +1,6 @@
-"""Small, local-only adapter between Mai's HTTP backend and VRChat chatbox.
+"""Small, local-only adapter between AI Astra's HTTP backend and VRChat chatbox.
 
-``ask`` calls Mai's ``generate_response`` method. Mai may update conversation
+``ask`` calls AI Astra's ``generate_response`` method. AI Astra may update conversation
 state while generating a response. It never forwards that response to VRChat;
 the operator must review it and explicitly run ``queue`` with approved text.
 """
@@ -21,7 +21,7 @@ from typing import Any
 
 
 DEFAULT_ENDPOINT = "http://127.0.0.1:8765"
-TOKEN_ENVIRONMENT_VARIABLE = "MAI_BACKEND_AUTH_TOKEN"
+TOKEN_ENVIRONMENT_VARIABLE = "AI_ASTRA_BACKEND_AUTH_TOKEN"
 HTTP_TIMEOUT_SECONDS = 5
 MAX_HTTP_RESPONSE_BYTES = 1024 * 1024
 MAX_ASK_CHARS = 4000
@@ -90,7 +90,7 @@ def _request_json(
     headers = {"Accept": "application/json"}
     token = os.environ.get(TOKEN_ENVIRONMENT_VARIABLE)
     if token:
-        headers["X-Mai-Token"] = token
+        headers["X-AIAstra-Token"] = token
 
     body = None
     if payload is not None:
@@ -105,40 +105,40 @@ def _request_json(
     try:
         with opener.open(request, timeout=timeout) as response:
             if response.status != 200:
-                raise BridgeError(f"Mai backend returned HTTP {response.status} for {path}.")
+                raise BridgeError(f"AI Astra backend returned HTTP {response.status} for {path}.")
             content = response.read(MAX_HTTP_RESPONSE_BYTES + 1)
     except urllib.error.HTTPError as exc:
         status = exc.code
         exc.close()
         if status in {301, 302, 303, 307, 308}:
-            raise BridgeError(f"Mai backend redirect refused for {path}; redirects are disabled.") from None
+            raise BridgeError(f"AI Astra backend redirect refused for {path}; redirects are disabled.") from None
         if status in {401, 403}:
             raise BridgeError(
-                f"Mai backend returned HTTP {status}; check whether {TOKEN_ENVIRONMENT_VARIABLE} is configured."
+                f"AI Astra backend returned HTTP {status}; check whether {TOKEN_ENVIRONMENT_VARIABLE} is configured."
             ) from None
-        raise BridgeError(f"Mai backend returned HTTP {status} for {path}.") from None
+        raise BridgeError(f"AI Astra backend returned HTTP {status} for {path}.") from None
     except urllib.error.URLError as exc:
         reason = exc.reason
         if isinstance(reason, TimeoutError):
-            raise BridgeError(f"Mai backend request timed out after {timeout:g} seconds.") from None
-        raise BridgeError(f"Could not reach Mai backend at {base_url}: {reason}.") from None
+            raise BridgeError(f"AI Astra backend request timed out after {timeout:g} seconds.") from None
+        raise BridgeError(f"Could not reach AI Astra backend at {base_url}: {reason}.") from None
     except TimeoutError:
-        raise BridgeError(f"Mai backend request timed out after {timeout:g} seconds.") from None
+        raise BridgeError(f"AI Astra backend request timed out after {timeout:g} seconds.") from None
     except OSError as exc:
-        raise BridgeError(f"Could not reach Mai backend at {base_url}: {exc}.") from None
+        raise BridgeError(f"Could not reach AI Astra backend at {base_url}: {exc}.") from None
     except http.client.HTTPException as exc:
         raise BridgeError(
-            f"Mai backend at {base_url} sent a malformed HTTP response ({type(exc).__name__})."
+            f"AI Astra backend at {base_url} sent a malformed HTTP response ({type(exc).__name__})."
         ) from None
 
     if len(content) > MAX_HTTP_RESPONSE_BYTES:
-        raise BridgeError(f"Mai backend response exceeded the {MAX_HTTP_RESPONSE_BYTES}-byte limit.")
+        raise BridgeError(f"AI Astra backend response exceeded the {MAX_HTTP_RESPONSE_BYTES}-byte limit.")
     try:
         document = json.loads(content.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError):
-        raise BridgeError("Mai backend returned invalid UTF-8 JSON.") from None
+        raise BridgeError("AI Astra backend returned invalid UTF-8 JSON.") from None
     if not isinstance(document, dict):
-        raise BridgeError("Mai backend returned an invalid JSON object.")
+        raise BridgeError("AI Astra backend returned an invalid JSON object.")
     return document
 
 
@@ -146,7 +146,7 @@ def get_health(endpoint: str = DEFAULT_ENDPOINT) -> dict[str, Any]:
     """Fetch health and return only fields safe for the status display."""
     document = _request_json(endpoint, "/health", "GET")
     if document.get("ok") is not True:
-        raise BridgeError("Mai backend health check did not report ok=true.")
+        raise BridgeError("AI Astra backend health check did not report ok=true.")
     summary: dict[str, Any] = {"ok": True}
     for key in ("transport", "api_name", "api_version"):
         value = document.get(key)
@@ -155,8 +155,8 @@ def get_health(endpoint: str = DEFAULT_ENDPOINT) -> dict[str, Any]:
     return summary
 
 
-def ask_mai(text: str, endpoint: str = DEFAULT_ENDPOINT) -> str:
-    """Ask Mai for a response; this can mutate Mai conversation state."""
+def ask_ai_astra(text: str, endpoint: str = DEFAULT_ENDPOINT) -> str:
+    """Ask AI Astra for a response; this can mutate AI Astra conversation state."""
     if not isinstance(text, str) or not text.strip():
         raise BridgeError("Ask text must not be blank.")
     if len(text) > MAX_ASK_CHARS:
@@ -169,12 +169,12 @@ def ask_mai(text: str, endpoint: str = DEFAULT_ENDPOINT) -> str:
     }
     document = _request_json(endpoint, "/api", "POST", envelope)
     if document.get("id") != request_id:
-        raise BridgeError("Mai backend response id did not match the request.")
+        raise BridgeError("AI Astra backend response id did not match the request.")
     if document.get("ok") is not True:
-        raise BridgeError("Mai backend reported that response generation failed.")
+        raise BridgeError("AI Astra backend reported that response generation failed.")
     result = document.get("result")
     if not isinstance(result, dict) or not isinstance(result.get("response"), str):
-        raise BridgeError("Mai backend response did not contain a text result.")
+        raise BridgeError("AI Astra backend response did not contain a text result.")
     return result["response"]
 
 
@@ -262,20 +262,20 @@ def _add_endpoint_argument(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--endpoint",
         default=DEFAULT_ENDPOINT,
-        help=f"Mai loopback HTTP base URL (default: {DEFAULT_ENDPOINT})",
+        help=f"AI Astra loopback HTTP base URL (default: {DEFAULT_ENDPOINT})",
     )
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Local Mai-to-VRChat text bridge.")
+    parser = argparse.ArgumentParser(description="Local AI Astra-to-VRChat text bridge.")
     commands = parser.add_subparsers(dest="command", required=True)
 
-    status = commands.add_parser("status", help="Check the Mai backend health endpoint.")
+    status = commands.add_parser("status", help="Check the AI Astra backend health endpoint.")
     _add_endpoint_argument(status)
 
-    ask = commands.add_parser("ask", help="Ask Mai for text; output is not sent to VRChat.")
+    ask = commands.add_parser("ask", help="Ask AI Astra for text; output is not sent to VRChat.")
     _add_endpoint_argument(ask)
-    ask.add_argument("text", help="Text to send to Mai")
+    ask.add_argument("text", help="Text to send to AI Astra")
 
     preview = commands.add_parser("preview", help="Validate and prepare an OSC chat draft without networking.")
     preview.add_argument("text", help="Text to preview")
@@ -310,8 +310,8 @@ def main(argv: list[str] | None = None) -> int:
             summary = get_health(args.endpoint)
             print(json.dumps(summary, ensure_ascii=False, separators=(",", ":")))
         elif args.command == "ask":
-            response = ask_mai(args.text, args.endpoint)
-            sys.stdout.write(f"Mai: {printable_response(response)}\n")
+            response = ask_ai_astra(args.text, args.endpoint)
+            sys.stdout.write(f"AI Astra: {printable_response(response)}\n")
             print("(Not sent to VRChat. Review it, then use: queue \"<approved text>\")", file=sys.stderr)
         elif args.command == "preview":
             print(json.dumps(preview_chat(args.text), ensure_ascii=False, separators=(",", ":")))

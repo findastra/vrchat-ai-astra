@@ -10,7 +10,7 @@ The folder was inspected as data only: nothing was imported, extracted, run, or 
 - If she doesn't have the key, or the tool won't verify it, use Poppy. Nobody gets around Meep's check: no pulling assets out of the package and no editing the vendor tool. Meep's terms forbid taking parts, and working around the check would break them.
 - The Meep scan (docs/meep-inventory.md) adds evidence. A "MOSTLY NOT READABLE" result means the content is locked behind the tool. The key is still what decides.
 
-## Observed: `D:\personal-files\virtual-assets\poppy`
+## Observed: `D:\personal-files\vr-assets\poppy`
 
 | Item | Size / date | What it is |
 |---|---|---|
@@ -45,8 +45,8 @@ From the edit logs (the latest is 2026-04-05):
 ```powershell
 cd "C:\Users\audra\Documents\ChatGPT\Mommy's Discord\astra-vrchat"
 $py = "C:\Users\audra\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
-& $py tools\inspect_unitypackage.py "D:\personal-files\virtual-assets\poppy\poppy-3-13-26\poppy-3-13-26.unitypackage" --out docs\generated\poppy-owner-3-13-26-scan
-& $py tools\inspect_unitypackage.py "D:\personal-files\virtual-assets\poppy\poppy\Poppy PC & Quest - Fix V6.unitypackage" --out docs\generated\poppy-vendor-v6-scan
+& $py tools\inspect_unitypackage.py "D:\personal-files\vr-assets\poppy\poppy-3-13-26\poppy-3-13-26.unitypackage" --out docs\generated\poppy-owner-3-13-26-scan
+& $py tools\inspect_unitypackage.py "D:\personal-files\vr-assets\poppy\poppy\Poppy PC & Quest - Fix V6.unitypackage" --out docs\generated\poppy-vendor-v6-scan
 ```
 
 These packages are 1.4 to 1.7 GB, so each scan takes a few minutes. The output is names and parameter metadata only.

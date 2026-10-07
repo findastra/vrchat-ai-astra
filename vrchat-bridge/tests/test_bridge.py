@@ -1,6 +1,6 @@
 """Offline tests for bridge.py using loopback stubs on ephemeral ports.
 
-Nothing here talks to a real Mai instance or to VRChat's live OSC port 9000.
+Nothing here talks to a real AI Astra instance or to VRChat's live OSC port 9000.
 Run from the astra-vrchat folder:  python -m unittest discover -s tests -v
 """
 
@@ -30,7 +30,7 @@ LIVE_VRCHAT_PORT = 9000
 TOKEN = "test-token-not-real"
 
 
-class StubMai:
+class StubAIAstra:
     """A tiny loopback HTTP server whose behaviour each test sets."""
 
     def __init__(self) -> None:
@@ -89,7 +89,7 @@ def echo_success(response_text="Hello from stub"):
 
 class HttpTests(unittest.TestCase):
     def setUp(self):
-        self.stub = StubMai()
+        self.stub = StubAIAstra()
         self.addCleanup(self.stub.close)
         patcher = mock.patch.dict(os.environ, {}, clear=False)
         patcher.start()
@@ -100,12 +100,12 @@ class HttpTests(unittest.TestCase):
     def test_health_summary_only_exposes_safe_fields(self):
         self.stub.behaviour = lambda h, b: (
             200,
-            {"ok": True, "transport": "http", "api_name": "mai", "api_version": "2", "state_dir": "C:/secret",
+            {"ok": True, "transport": "http", "api_name": "astra", "api_version": "2", "state_dir": "C:/secret",
              "brain_rows": 123},
             None,
         )
         summary = bridge.get_health(self.stub.endpoint)
-        self.assertEqual(summary, {"ok": True, "transport": "http", "api_name": "mai", "api_version": "2"})
+        self.assertEqual(summary, {"ok": True, "transport": "http", "api_name": "astra", "api_version": "2"})
         self.assertEqual(self.stub.requests[0]["method"], "GET")
         self.assertEqual(self.stub.requests[0]["path"], "/health")
 
@@ -117,7 +117,7 @@ class HttpTests(unittest.TestCase):
     # --- ask: contract ------------------------------------------------------
     def test_ask_sends_exact_contract_and_returns_response(self):
         self.stub.behaviour = echo_success("Hi Astra ✨")
-        self.assertEqual(bridge.ask_mai("hello ✨", self.stub.endpoint), "Hi Astra ✨")
+        self.assertEqual(bridge.ask_ai_astra("hello ✨", self.stub.endpoint), "Hi Astra ✨")
         request = self.stub.requests[0]
         self.assertEqual((request["method"], request["path"]), ("POST", "/api"))
         body = json.loads(request["body"].decode("utf-8"))
@@ -126,24 +126,24 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(body["params"], {"user_input": "hello ✨"})
         self.assertTrue(body["id"])
         self.assertTrue(request["headers"]["Content-Type"].startswith("application/json"))
-        self.assertNotIn("X-Mai-Token", request["headers"])
+        self.assertNotIn("x-aiastra-token", {k.lower() for k in request["headers"]})
 
     def test_ask_uses_unique_ids(self):
         self.stub.behaviour = echo_success()
-        bridge.ask_mai("one", self.stub.endpoint)
-        bridge.ask_mai("two", self.stub.endpoint)
+        bridge.ask_ai_astra("one", self.stub.endpoint)
+        bridge.ask_ai_astra("two", self.stub.endpoint)
         ids = [json.loads(r["body"])["id"] for r in self.stub.requests]
         self.assertNotEqual(ids[0], ids[1])
 
     def test_ask_rejects_mismatched_id(self):
         self.stub.behaviour = lambda h, b: (200, {"id": "someone-else", "ok": True, "result": {"response": "x"}}, None)
         with self.assertRaisesRegex(bridge.BridgeError, "id did not match"):
-            bridge.ask_mai("hello", self.stub.endpoint)
+            bridge.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_rejects_missing_id(self):
         self.stub.behaviour = lambda h, b: (200, {"ok": True, "result": {"response": "x"}}, None)
         with self.assertRaisesRegex(bridge.BridgeError, "id did not match"):
-            bridge.ask_mai("hello", self.stub.endpoint)
+            bridge.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_requires_ok_strictly_true(self):
         for ok_value in (False, "true", 1, None):
@@ -154,7 +154,7 @@ class HttpTests(unittest.TestCase):
 
                 self.stub.behaviour = behaviour
                 with self.assertRaisesRegex(bridge.BridgeError, "failed"):
-                    bridge.ask_mai("hello", self.stub.endpoint)
+                    bridge.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_rejects_bad_result_shapes(self):
         for result in (None, "text", {"response": 5}, {"text": "x"}, []):
@@ -164,25 +164,26 @@ class HttpTests(unittest.TestCase):
 
                 self.stub.behaviour = behaviour
                 with self.assertRaisesRegex(bridge.BridgeError, "text result"):
-                    bridge.ask_mai("hello", self.stub.endpoint)
+                    bridge.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_input_validation_makes_no_request(self):
         for text in ("", "   \n", "x" * (bridge.MAX_ASK_CHARS + 1)):
             with self.subTest(length=len(text)):
                 with self.assertRaises(bridge.BridgeError):
-                    bridge.ask_mai(text, self.stub.endpoint)
+                    bridge.ask_ai_astra(text, self.stub.endpoint)
         self.assertEqual(self.stub.requests, [])
 
     # --- auth ---------------------------------------------------------------
     def test_token_header_sent_when_configured_and_never_echoed(self):
         os.environ[bridge.TOKEN_ENVIRONMENT_VARIABLE] = TOKEN
         self.stub.behaviour = echo_success()
-        bridge.ask_mai("hello", self.stub.endpoint)
-        self.assertEqual(self.stub.requests[0]["headers"].get("X-Mai-Token"), TOKEN)
+        bridge.ask_ai_astra("hello", self.stub.endpoint)
+        received = {k.lower(): v for k, v in self.stub.requests[0]["headers"].items()}  # HTTP header names are case-insensitive
+        self.assertEqual(received.get("x-aiastra-token"), TOKEN)
 
         self.stub.behaviour = lambda h, b: (401, {"ok": False, "error": "unauthorized"}, None)
         with self.assertRaises(bridge.BridgeError) as caught:
-            bridge.ask_mai("hello", self.stub.endpoint)
+            bridge.ask_ai_astra("hello", self.stub.endpoint)
         self.assertIn("401", str(caught.exception))
         self.assertIn(bridge.TOKEN_ENVIRONMENT_VARIABLE, str(caught.exception))
         self.assertNotIn(TOKEN, str(caught.exception))
@@ -194,7 +195,7 @@ class HttpTests(unittest.TestCase):
 
     # --- redirects ----------------------------------------------------------
     def test_redirect_refused_and_token_not_forwarded(self):
-        other = StubMai()
+        other = StubAIAstra()
         self.addCleanup(other.close)
         other.behaviour = lambda h, b: (200, {"ok": True}, None)
         os.environ[bridge.TOKEN_ENVIRONMENT_VARIABLE] = TOKEN
@@ -478,7 +479,7 @@ class QueueTests(unittest.TestCase):
 
 class CliTests(unittest.TestCase):
     def setUp(self):
-        self.stub = StubMai()
+        self.stub = StubAIAstra()
         self.addCleanup(self.stub.close)
 
     def run_cli(self, argv):
@@ -488,17 +489,17 @@ class CliTests(unittest.TestCase):
         return code, out.getvalue(), err.getvalue()
 
     def test_status(self):
-        self.stub.behaviour = lambda h, b: (200, {"ok": True, "api_name": "mai", "secret": "x"}, None)
+        self.stub.behaviour = lambda h, b: (200, {"ok": True, "api_name": "astra", "secret": "x"}, None)
         code, out, _ = self.run_cli(["status", "--endpoint", self.stub.endpoint])
         self.assertEqual(code, 0)
-        self.assertEqual(json.loads(out), {"ok": True, "api_name": "mai"})
+        self.assertEqual(json.loads(out), {"ok": True, "api_name": "astra"})
 
     def test_ask_escapes_terminal_controls_and_does_not_queue(self):
         self.stub.behaviour = echo_success("line1\n\x1b[2Jclear\ttab")
         with mock.patch.object(bridge, "queue_chat", side_effect=AssertionError("ask must not queue")):
             code, out, err = self.run_cli(["ask", "hi", "--endpoint", self.stub.endpoint])
         self.assertEqual(code, 0)
-        self.assertEqual(out, "Mai: line1\n\\x1b[2Jclear\ttab\n")
+        self.assertEqual(out, "AI Astra: line1\n\\x1b[2Jclear\ttab\n")
         self.assertIn("Not sent to VRChat", err)
 
     def test_error_exit_code(self):

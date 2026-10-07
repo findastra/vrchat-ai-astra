@@ -9,8 +9,8 @@ Sections are tagged **Observed** (read from a file) or **Assumption / proposal**
 
 | File | Size | Status |
 |---|---|---|
-| `D:\personal-files\virtual-assets\meep\MeepByKhihani.unitypackage` | 971,997,718 bytes | **Not read yet.** It is over the 400 MB limit for moving files into Claude's cloud workspace. The terms also say not to share the package, so it should be inspected on this computer, not copied off it. |
-| `D:\personal-files\virtual-assets\meep\UPLOAD INFORMATION.txt` | 3,912 bytes | Read in full. |
+| `D:\personal-files\vr-assets\meep\MeepByKhihani.unitypackage` | 971,997,718 bytes | **Not read yet.** It is over the 400 MB limit for moving files into Claude's cloud workspace. The terms also say not to share the package, so it should be inspected on this computer, not copied off it. |
+| `D:\personal-files\vr-assets\meep\UPLOAD INFORMATION.txt` | 3,912 bytes | Read in full. |
 
 These are the only two files in that folder.
 
@@ -42,7 +42,7 @@ Run it on this computer (about 1 GB is decompressed in memory as a stream, so al
 ```powershell
 cd "C:\Users\audra\Documents\ChatGPT\Mommy's Discord\astra-vrchat"
 $py = "C:\Users\audra\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
-& $py tools\inspect_unitypackage.py "D:\personal-files\virtual-assets\meep\MeepByKhihani.unitypackage" --out docs\generated\meep-scan
+& $py tools\inspect_unitypackage.py "D:\personal-files\vr-assets\meep\MeepByKhihani.unitypackage" --out docs\generated\meep-scan
 ```
 
 This writes `docs\generated\meep-scan.md` and `.json` (names and metadata only). The report starts with a **lock assessment**. "MOSTLY NOT READABLE" means most Unity assets aren't plain text, probably because they're locked until the vendor tool verifies a license. It also lists file names that look like license or setup tooling. Locked content is never worked around; per the owner's rule, the fallback is Poppy.

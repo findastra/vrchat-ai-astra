@@ -1,22 +1,22 @@
 # How embodied Astra gets her personality and movement
 
-Claude, 2026-09-30. The owner's goals, in her words: Astra's personality starts **from scratch, not a copy of Mai**. She should be **"just like me"**, but also **her own person**. She should **live on after me so my friends can have her** (the same reason Mai was created). And she should **copy my eye and body tracking data in game and integrate it continuously into her own movements.**
+Claude, 2026-09-30. The owner's goals, in her words: Astra's personality starts **from scratch, not a copy of AI Astra**. She should be **"just like me"**, but also **her own person**. She should **live on after me so my friends can have her** (the same reason AI Astra was created). And she should **copy my eye and body tracking data in game and integrate it continuously into her own movements.**
 
 ## What decides her personality today
 
-Nothing yet. `bridge.py` is only transport: it carries text between a "brain" and the VRChat chatbox. As first planned, that brain was **Mai's backend** (`generate_response` on Mai's trained SQLite brain). If Astra were connected to it, she would literally speak as Mai. **Given the owner's goal, the bridge should not be pointed at Mai's brain.** The bridge stays; only the brain behind it changes.
+Nothing yet. `bridge.py` is only transport: it carries text between a "brain" and the VRChat chatbox. As first planned, that brain was **AI Astra's backend** (`generate_response` on AI Astra's trained SQLite brain). If Astra were connected to it, she would literally speak as AI Astra. **Given the owner's goal, the bridge should not be pointed at AI Astra's brain.** The bridge stays; only the brain behind it changes.
 
-## Existing reference: `C:\mai\mai_voice` (Mai Voice)
+## Existing reference: `C:\ai_astra\ai_astra_voice` (AI Astra Voice)
 
-An earlier Claude session built **Mai Voice**: Mai in the VRChat chatbox. `persona.md` is her personality. Mai's `cognitive_core.py` (imported read-only) picks a strategy. Claude (Haiku by default, via the owner's `ANTHROPIC_API_KEY` environment variable) writes the words. Her own state lives in `mai_voice\state\mai_voice.db`. It has a PG-13 filter and says she's an AI.
+An earlier Claude session built **AI Astra Voice**: AI Astra in the VRChat chatbox. `persona.md` is her personality. AI Astra's `cognitive_core.py` (imported read-only) picks a strategy. Claude (Haiku by default, via the owner's `ANTHROPIC_API_KEY` environment variable) writes the words. Her own state lives in `ai_astra_voice\state\mai_voice.db`. It has a PG-13 filter and says she's an AI.
 
-That's the same *shape* Astra could use. Astra would get **her own** persona file and state, and would drop Mai's cognitive core and Mai's brain. That way she starts from scratch rather than copying Mai.
+That's the same *shape* Astra could use. Astra would get **her own** persona file and state, and would drop AI Astra's cognitive core and AI Astra's brain. That way she starts from scratch rather than copying AI Astra.
 
 ## Proposed design: three layers, kept separate so she can outlive any one tool
 
 1. **Seed identity: "just like me"** (written with the owner, stored as plain files)
    - A short "who I am" document: values, humor, how she talks, what she loves (music, design, VRChat, the Mommy's community), what she won't do, and how she treats friends.
-   - It's built from the owner, not from Mai: an interview series (a few sessions of questions, answered in her own words, typed or voice), plus writing samples she chooses (her own messages and posts).
+   - It's built from the owner, not from AI Astra: an interview series (a few sessions of questions, answered in her own words, typed or voice), plus writing samples she chooses (her own messages and posts).
    - Only the owner's own words go in. Friends' messages don't go in without their OK.
 
 2. **Her own memory: "her own person"**
@@ -31,7 +31,7 @@ That's the same *shape* Astra could use. Astra would get **her own** persona fil
    |---|---|---|
    | Local open-weight model on a PC | Free to run. Private. Keeps working without anyone's account or payment. | Needs a strong GPU (fits the planned desktop build). Smaller models talk less well. |
    | Hosted model (Claude, OpenAI) | Best conversation today | Costs per use, and needs an account and payment that must continue after the owner's death |
-   | Mai's engine with a **fresh, empty** state directory | Truly from scratch; reuses code Mai's author offered | Quality unknown; it learns only from what it's told |
+   | AI Astra's engine with a **fresh, empty** state directory | Truly from scratch; reuses code AI Astra's author offered | Quality unknown; it learns only from what it's told |
 
    Recommendation: the **identity and memory files are what "lives on"**. They should be plain, portable formats that any future engine can load. Engines will change many times over the years.
 
