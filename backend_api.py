@@ -161,7 +161,7 @@ def _load_runtime_brain_factory(runtime_config: dict[str, Any]):
     if isinstance(configured_module, str) and configured_module:
         module_candidates.append(configured_module)
     module_candidates.extend([
-        'maimain.backend_runtime',
+        'ai_astra_main.backend_runtime',
         'backend_runtime',
     ])
 
@@ -1737,8 +1737,8 @@ class AIAstraBackendAPI:
         return {
             'app_dir': self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__)),
             'db_file': self._get_db_file(),
-            'runtime_module': self.api_config.get('runtime_module', self.api_config.get('desktop_module', 'maimain.backend_runtime')),
-            'desktop_module': self.api_config.get('desktop_module', self.api_config.get('runtime_module', 'maimain.backend_runtime')),
+            'runtime_module': self.api_config.get('runtime_module', self.api_config.get('desktop_module', 'ai_astra_main.backend_runtime')),
+            'desktop_module': self.api_config.get('desktop_module', self.api_config.get('runtime_module', 'ai_astra_main.backend_runtime')),
             'use_hsb_backend': bool(self.settings_manager.get('use_hsb_backend', False)),
             'base_priority_boost': int(self.api_config.get('training_chunk_priority_boost', 2) or 2),
         }

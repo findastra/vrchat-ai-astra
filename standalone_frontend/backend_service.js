@@ -163,7 +163,7 @@ class BackendService extends EventEmitter {
     if (isPyLauncher(this.pythonPath)) {
       args.push('-3');
     }
-    args.push('-m', 'maimain.headless_api', 'serve-http', '--host', this.host, '--port', String(port));
+    args.push('-m', 'ai_astra_main.headless_api', 'serve-http', '--host', this.host, '--port', String(port));
     return {
       command: this.pythonPath,
       args,

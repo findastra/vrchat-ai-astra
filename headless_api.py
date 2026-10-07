@@ -476,7 +476,7 @@ def cmd_gated_learn(args) -> int:
     try:
         from evaluation_harness import assess_learning_hygiene
     except ImportError:
-        from maimain.evaluation_harness import assess_learning_hygiene
+        from ai_astra_main.evaluation_harness import assess_learning_hygiene
     early_hygiene = assess_learning_hygiene(response_text or user_text, user_text)
     if not early_hygiene.get('accept', False) and (response_text or user_text):
         payload = {

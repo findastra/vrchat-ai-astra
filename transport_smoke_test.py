@@ -73,7 +73,7 @@ def _write_json_line(process: subprocess.Popen[str], payload: dict) -> None:
 
 
 def run_http_smoke_test(port: int, prompt: str) -> dict:
-    command = [sys.executable, '-m', 'maimain.headless_api', 'serve-http', '--port', str(port)]
+    command = [sys.executable, '-m', 'ai_astra_main.headless_api', 'serve-http', '--port', str(port)]
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,
@@ -275,7 +275,7 @@ def run_http_smoke_test(port: int, prompt: str) -> dict:
 
 
 def run_stdio_smoke_test(prompt: str) -> dict:
-    command = [sys.executable, '-m', 'maimain.headless_api', 'serve-stdio']
+    command = [sys.executable, '-m', 'ai_astra_main.headless_api', 'serve-stdio']
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,

@@ -7093,8 +7093,8 @@ def build_backend_api_config():
     return {
         'app_dir': APP_DIR,
         'brain_factory': HybridBrain,
-        'runtime_module': 'maimain.backend_runtime',
-        'desktop_module': 'maimain.backend_runtime',
+        'runtime_module': 'ai_astra_main.backend_runtime',
+        'desktop_module': 'ai_astra_main.backend_runtime',
         'get_system_tier': get_system_tier,
         'get_hardware_profile': get_hardware_profile,
         'context_levels': CONTEXT_LEVELS,

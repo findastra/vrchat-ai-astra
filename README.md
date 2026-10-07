@@ -1,4 +1,14 @@
-# AI Astra: a framework-free statistical AI
+# VRChat AI Astra
+
+AI Astra is a framework-free statistical AI companion. This repo holds her backend and
+desktop app (this folder) and the bridge that carries her into the VRChat chatbox
+([`vrchat-bridge/`](vrchat-bridge/README.md)).
+
+Local home: `C:\ai_astra\ai_astra_main`. Her learned memory is never committed; each
+install starts fresh. The old Mai's condensed memory and dossier are kept in
+`C:\ai_astra\legacy\old-mai-memory\`.
+
+## What AI Astra is
 
 AI Astra aims to be a **lifelike, coherent alternative** to GPT-style pretrained datacenter models: not a fancy autocomplete over frozen internet text, but a mind that keeps living memory, appraises situations, chooses goals, and learns from outcomes. It is built from persistent n-gram statistics, word associations, semantic clustering, symbolic reasoning, graph reasoning, analog attention, adaptive memory, and a sparse Norn-style cognitive controller. The core runtime does **not** import PyTorch, TensorFlow, Keras, or JAX. An optional NumPy MLP is lazy and excluded from predictions until it has received real training; random weights are never blended into answers. Optional CUDA/OpenCL support accelerates bulk pattern processing and is not required for response generation.
 
@@ -21,13 +31,13 @@ Run_AIAstra.bat
 
 If the full interface looks wrong, launch `Launch_AIAstra_Test.cmd`. It opens a deliberately small diagnostic client with backend status, one prompt, one response, cognitive-control fields (goal, action, directive, hygiene, realization mode, continuity, episode), and raw request details. By default it uses a temporary state directory so diagnostic messages do not alter the trained brain; set `AI_ASTRA_TEST_USE_LIVE_STATE=1` before launching when you explicitly want to test the live state.
 
-Headless commands run from the directory *above* `maimain`:
+Headless commands run from the directory *above* `ai_astra_main`:
 
 ```powershell
-py -3 -m maimain.headless_api status
-py -3 -m maimain.headless_api generate "What have you learned about AI Astra?"
-py -3 -m maimain.headless_api train "D:\path\to\training"
-py -3 -m maimain.headless_api serve-http --port 8765
+py -3 -m ai_astra_main.headless_api status
+py -3 -m ai_astra_main.headless_api generate "What have you learned about AI Astra?"
+py -3 -m ai_astra_main.headless_api train "D:\path\to\training"
+py -3 -m ai_astra_main.headless_api serve-http --port 8765
 ```
 
 Training coalesces repeated observations into large sorted upserts, accumulates evidence instead of replacing it, and fingerprints completed files in `training_history`. Re-running the same corpus skips it unless its normalized content changes.
@@ -62,8 +72,8 @@ Both full suites run without learning from their answers, emit an explicit pass/
 Live chat still uses cheap hygiene gates. Intentional durable learning can be proposed through a clone trial:
 
 ```powershell
-py -3 -m maimain.headless_api gated-learn --user "How could curiosity change answer length?" --response "Curiosity can lengthen exploration while confidence is low, then shorten answers once a coherent relation is found." --dry-run
-py -3 -m maimain.headless_api gated-learn --user "..." --response "..." 
+py -3 -m ai_astra_main.headless_api gated-learn --user "How could curiosity change answer length?" --response "Curiosity can lengthen exploration while confidence is low, then shorten answers once a coherent relation is found." --dry-run
+py -3 -m ai_astra_main.headless_api gated-learn --user "..." --response "..." 
 ```
 
 The flow is: hygiene → learn on an in-memory clone → re-run the gate suite → compare pre/post (and the generative baseline when present) → commit to the live brain only if accepted. Use `--dry-run` to inspect the decision without writing.

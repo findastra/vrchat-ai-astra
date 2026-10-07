@@ -14,7 +14,8 @@ as a whole word-part, so main/email/domain/maintain are never touched):
   Text people read      Mai's brain            -> AI Astra's brain
   Header-style          X-Mai-Token            -> X-AIAstra-Token
   Self-name / prefixes  'mai', 'mai:invoke'    -> 'astra', 'astra:invoke'
-  Folder paths          C:\\mai\\, /mai/       -> unchanged (Mai's root folder)
+  Folders               C:\\mai\\, maimain, mai_voice -> C:\\ai_astra\\, ai_astra_main, ai_astra_voice
+  Other path segments   ...\\legacy\\Mai.ps1   -> unchanged (real files on disk)
 
 Files whose names contain a Mai word-part are renamed with git mv when the
 file is tracked. Safe to re-run: already-renamed code has nothing left to match.
@@ -47,8 +48,18 @@ def convert_part(part, word):
     return None  # odd casing like 'mAi': leave and report
 
 
+# Folders that were renamed on disk, so their names change everywhere, paths included.
+RENAMED_FOLDERS = {'maimain': 'ai_astra_main', 'mai_voice': 'ai_astra_voice'}
+ROOT_PATHS = [('C:\\mai\\', 'C:\\ai_astra\\'), ('C:/mai/', 'C:/ai_astra/'), ('C:\\\\mai\\\\', 'C:\\\\ai_astra\\\\')]
+
+
 def convert_word(word, before, after, after2=''):
     """Return the replacement for a whole word, or None to leave it."""
+    if word in RENAMED_FOLDERS:
+        return RENAMED_FOLDERS[word]
+    if before == '\\':
+        # Other Windows path segments (...\legacy\Mai.ps1): real files on disk, left alone.
+        return None
     if word.lower() == 'mai':
         # Folder paths such as C:\mai\ or /mai/ stay as they are.
         if before and before in '\\/' and (after in '\\/' or after == ''):
@@ -79,6 +90,11 @@ def convert_word(word, before, after, after2=''):
 
 
 def rename_text(text, counter):
+    for old, new in ROOT_PATHS:
+        if old in text:
+            counter[(old, new)] += text.count(old)
+            text = text.replace(old, new)
+
     def repl(m):
         word = m.group(0)
         s, e = m.span()
