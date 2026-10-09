@@ -124,3 +124,14 @@ Both fields appear in the Electron provenance panel and the diagnostic test clie
 
 - Finish large-brain vocab-ID migration in controlled batches, then optionally switch `vocab_id_storage_mode` to `ids` and drop redundant TEXT chain pages once verified.
 - Keep new work on the headless/Electron path; avoid growing the legacy `ai_astra_phoenix_desktop.py` monolith.
+
+
+## Astra Wisp pet interface
+
+*A pet app by Astra.*
+
+Open [vrchat-ai-astra-20261008.html](vrchat-ai-astra-20261008.html) in a modern browser, or double-click Astra Wisp in Astra's Pet Apps. The nine original pet moods and manifest are included.
+
+Limits: this browser interface does not install or start native programs. Where an existing web app is available, the Cage opens that app. Draft controls store their data in the current browser and do not imply connected services. Existing application instructions above still apply.
+
+Version [v0.1.0-20261008-pets](https://github.com/findastra/vrchat-ai-astra/tree/v0.1.0-20261008-pets). Added with OpenAI Codex (GPT-6), 2026-10-08.

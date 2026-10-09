@@ -1,0 +1,19 @@
+{
+  "pet": "Astra Wisp",
+  "size": [
+    256,
+    256
+  ],
+  "frames": {
+    "idle": "pet-art/idle-20261008.png",
+    "blink": "pet-art/blink-20261008.png",
+    "happy": "pet-art/happy-20261008.png",
+    "curious": "pet-art/curious-20261008.png",
+    "worried": "pet-art/worried-20261008.png",
+    "sad": "pet-art/sad-20261008.png",
+    "sick": "pet-art/sick-20261008.png",
+    "alarmed": "pet-art/alarmed-20261008.png",
+    "sleep": "pet-art/sleep-20261008.png"
+  },
+  "built_with": "OpenAI Codex (GPT-6), 2026-10-08"
+}
