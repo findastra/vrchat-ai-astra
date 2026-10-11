@@ -135,3 +135,5 @@ Open [vrchat-ai-astra-20261008.html](vrchat-ai-astra-20261008.html) in a modern 
 Limits: this browser interface does not install or start native programs. Where an existing web app is available, the Cage opens that app. Draft controls store their data in the current browser and do not imply connected services. Existing application instructions above still apply.
 
 Version [v0.1.0-20261008-pets](https://github.com/findastra/vrchat-ai-astra/tree/v0.1.0-20261008-pets). Added with OpenAI Codex (GPT-6), 2026-10-08.
+
+Desktop appearance draft updated 2026-10-11: see [desktop details](desktop-pet-20261011.json). This changes the desktop pet, not application features.
