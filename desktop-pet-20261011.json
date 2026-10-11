@@ -8,15 +8,16 @@
   "sparkles": false,
   "renderer": "astras-pet-apps/scripts/desktop-pets-20261011.cs",
   "art_files": [
-    "desktop-art/astra-wisp/idle-20261011.png",
+    "desktop-art/astra-wisp/alarmed-20261011.png",
     "desktop-art/astra-wisp/blink-20261011.png",
-    "desktop-art/astra-wisp/happy-20261011.png",
     "desktop-art/astra-wisp/curious-20261011.png",
-    "desktop-art/astra-wisp/worried-20261011.png",
+    "desktop-art/astra-wisp/happy-20261011.png",
+    "desktop-art/astra-wisp/idle-20261011.png",
     "desktop-art/astra-wisp/sad-20261011.png",
     "desktop-art/astra-wisp/sick-20261011.png",
-    "desktop-art/astra-wisp/alarmed-20261011.png",
-    "desktop-art/astra-wisp/sleep-20261011.png"
+    "desktop-art/astra-wisp/sleep-20261011.png",
+    "desktop-art/astra-wisp/worried-20261011.png"
   ],
-  "notes": "Fairy wings with partial alpha."
+  "notes": "Fairy wings with partial alpha.",
+  "source_sheet": "desktop-art/astra-wisp/sheet-20261011.png"
 }

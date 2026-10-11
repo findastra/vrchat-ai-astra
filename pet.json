@@ -14,7 +14,7 @@
   },
   "version": "0.1.0-20261008-pets",
   "source": "https://github.com/findastra/vrchat-ai-astra/tree/v0.1.0-20261008-pets",
-  "built_with": "OpenAI Codex (GPT-6), 2026-10-08",
+  "built_with": "OpenAI Codex (GPT-6), 2026-10-08; OpenAI Codex (GPT-6), 2026-10-11",
   "desktop_pet": "desktop-pet-20261011.json",
   "desktop_art_built_with": "OpenAI Codex (GPT-6), built-in imagegen and native renderer, 2026-10-11"
 }
