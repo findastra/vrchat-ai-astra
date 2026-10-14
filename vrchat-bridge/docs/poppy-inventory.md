@@ -43,8 +43,8 @@ From the edit logs (the latest is 2026-04-05):
 ## Scan commands (read-only, on this computer)
 
 ```powershell
-cd "C:\Users\audra\Documents\ChatGPT\Mommy's Discord\astra-vrchat"
-$py = "C:\Users\audra\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+cd "$env:USERPROFILE\Documents\ChatGPT\Mommy's Discord\astra-vrchat"
+$py = "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
 & $py tools\inspect_unitypackage.py "D:\personal-files\vr-assets\poppy\poppy-3-13-26\poppy-3-13-26.unitypackage" --out docs\generated\poppy-owner-3-13-26-scan
 & $py tools\inspect_unitypackage.py "D:\personal-files\vr-assets\poppy\poppy\Poppy PC & Quest - Fix V6.unitypackage" --out docs\generated\poppy-vendor-v6-scan
 ```

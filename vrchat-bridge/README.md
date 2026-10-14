@@ -21,7 +21,7 @@ Tests ran in Claude's Linux workspace (Python 3.11.15), not yet on Windows.
 From this folder in PowerShell (the bundled Python is enough; nothing to install):
 
 ```powershell
-$py = "C:\Users\audra\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+$py = "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
 
 # Tests: loopback stubs on random ports only, never port 9000 or AI Astra
 & $py -m unittest discover -s tests -v
