@@ -42,7 +42,7 @@ Avatar
 ## Meep project status (2026-09-30, 11:00)
 
 - The owner asked Claude to do the setup: **NSFW, face tracking, Dancefloor**.
-- Created with VCC: `C:\Users\audra\Documents\vr-assets\unity\vrchat-avatars\Astra Meep` (Unity 2022.3.22f1, VRChat SDK Avatars 3.10.5). It's separate from Astra-Infinite-Pole.
+- Created with VCC: `%USERPROFILE%\Documents\vr-assets\unity\vrchat-avatars\Astra Meep` (Unity 2022.3.22f1, VRChat SDK Avatars 3.10.5). It's separate from Astra-Infinite-Pole.
 - `MeepByKhihani.unitypackage` was imported in full. It contains Dor's Avatar Setup (`Assets/Dor`, `Dev.Dor.AvatarSetup.dll`), `Assets/Meep by Khihani`, and the scene `CLICK ME - MEEP`.
 - Opened `CLICK ME - MEEP`. The "Meep Setup" window is **waiting for the license key**.
 - **Owner step:** paste the key and click **Verify**. Verify also accepts Dor's notice that license info may be collected. Claude doesn't type license keys or accept terms for the owner.

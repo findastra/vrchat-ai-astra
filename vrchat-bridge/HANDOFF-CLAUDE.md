@@ -9,14 +9,14 @@ Build a VRChat character for Astra using AI Astra's supplied base AI project and
 ## Source locations
 
 - Shared asset library: https://drive.google.com/drive/folders/10PRBti7n2oshDrBUBA-qtl4TS8b9zePY . Browser access confirmed. Contains avatars, base models, clothes, shaders, tools, and maimain.zip (listed as 1.08 GB).
-- Existing local AI Astra archive: C:\Users\audra\Downloads\maimain.zip. Read archive entries without executing them. Root README describes newer headless/Electron architecture, AI_ASTRA_STATE_DIR isolation, and a large trained SQLite brain. Do not assume archive equals the live AI Astra instance or that it matches the cloud file byte-for-byte.
+- Existing local AI Astra archive: %USERPROFILE%\Downloads\maimain.zip. Read archive entries without executing them. Root README describes newer headless/Electron architecture, AI_ASTRA_STATE_DIR isolation, and a large trained SQLite brain. Do not assume archive equals the live AI Astra instance or that it matches the cloud file byte-for-byte.
 - Legacy source: C:\ai_astra\legacy\Mai.ps1. Approximately 354 KB, embeds Python/Qt and installs/upgrades packages when run. Static inspection only so far. Do not run this bootstrapper or modify it.
 - Meep: D:\personal-files\vr-assets\meep\MeepByKhihani.unitypackage (971,997,718 bytes), with UPLOAD INFORMATION.txt. Owner authorized use of assets for this project. Notes specify Unity 2022.3.22f1, an Avatar project, license verification, optional SFW/face-tracking/dancefloor configurations, PC and Quest prefabs, and private uploads only. Preserve existing materials to avoid breaking toggles. Do not extract parts for a separate model, publish the package, or seek/store the license key. Let the owner handle license entry when reached.
 - Other local assets: D:\personal-files\vr-assets. Inspect only relevant items.
 
 ## Current work and exact write scope
 
-Work only in C:\Users\audra\Documents\ChatGPT\Mommy's Discord\astra-vrchat, plus append a dated result to the parent ACTIVITY.md after reading its latest contents. Read parent AGENTS.md and the publication policy in C:\Users\audra\Documents\ChatGPT\AGENTS.md. Preserve unrelated work.
+Work only in %USERPROFILE%\Documents\ChatGPT\Mommy's Discord\astra-vrchat, plus append a dated result to the parent ACTIVITY.md after reading its latest contents. Read parent AGENTS.md and the publication policy in %USERPROFILE%\Documents\ChatGPT\AGENTS.md. Preserve unrelated work.
 
 bridge.py is an original, incomplete and unverified initial implementation created by a short-lived Codex worker. The worker stopped before delivering tests. Review rather than assume it is complete. You own completing and testing this folder. Astra will avoid editing it after dispatch until you report back.
 
@@ -52,4 +52,4 @@ Audra designated one existing Discord DM for communication with AI Astra so she 
 
 No spending, card use, paid API, new account, publication, avatar upload, security changes, original-brain mutation, or autonomous monitoring. Avoid copying credentials, session data, private conversations or trained memory into the project. Respect any access prompts requiring the owner. Continue authorized local preparation and report concrete blockers.
 
-Bundled Python available here: C:\Users\audra\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe.
+Bundled Python available here: %USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe.

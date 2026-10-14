@@ -40,8 +40,8 @@ Not stated in the file: which parameters, menus or toggles exist, the synced-bit
 Run it on this computer (about 1 GB is decompressed in memory as a stream, so allow a minute or two):
 
 ```powershell
-cd "C:\Users\audra\Documents\ChatGPT\Mommy's Discord\astra-vrchat"
-$py = "C:\Users\audra\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+cd "$env:USERPROFILE\Documents\ChatGPT\Mommy's Discord\astra-vrchat"
+$py = "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
 & $py tools\inspect_unitypackage.py "D:\personal-files\vr-assets\meep\MeepByKhihani.unitypackage" --out docs\generated\meep-scan
 ```
 
