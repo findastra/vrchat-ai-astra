@@ -1,12 +1,26 @@
-# VRChat AI Astra
+# The Astral Plane
 
-AI Astra is a framework-free statistical AI companion. This repo holds her backend and
-desktop app (this folder) and the bridge that carries her into the VRChat chatbox
-([`vrchat-bridge/`](vrchat-bridge/README.md)).
+*A pet app by Astra.*
 
-Local home: `C:\ai_astra\ai_astra_main`. Her learned memory is never committed; each
-install starts fresh. The old Mai's condensed memory and dossier are kept in
-`C:\ai_astra\legacy\old-mai-memory\`.
+The Astral Plane is the home of **AI Astra**, an embodied AI: a framework-free statistical
+mind with living memory, meant to live in VRChat through an avatar body. **Astra Wisp** is
+the pet that looks after her health.
+
+This repo holds her mind (the backend and desktop app, this folder), her VRChat body
+([`vrchat-embodiment/`](vrchat-embodiment/README.md)) and her voice tool
+([`voice/`](voice/README.md)). Her learned memory is never committed: each install starts
+with an empty brain and learns its own.
+
+## Limits
+
+Said plainly, so nobody mistakes the goal for what exists today:
+
+- **Her body is text only so far.** `vrchat-embodiment/` can draft a chatbox line for you to
+  send; it has never run against live VRChat. Avatar movement, expressions and voice are planned.
+- **AI Astra Voice** (`voice/`) uses Claude to word her replies; her own mind only chooses the goal
+  and strategy. It needs your own Anthropic API key.
+- **She starts untrained.** Her mind learns from scratch on each install.
+- **Windows only** for now, with Python 3.13 and Electron.
 
 ## What AI Astra is
 
@@ -31,18 +45,18 @@ Run_AIAstra.bat
 
 `Run_AIAstra.bat` uses `.venv` automatically when it exists. `requirements.txt` pins the direct
 dependencies; `requirements.lock.txt` pins all 41 packages for an exact rebuild (Python 3.13).
-In the commands below, `py -3` can be replaced with `.venv\Scripts\python` (or
-`ai_astra_main\.venv\Scripts\python` from the folder above).
+The commands below use the repo's `.venv`; any Python 3.13 with `requirements.txt` installed works too.
+Run them from this folder.
 
 If the full interface looks wrong, launch `Launch_AIAstra_Test.cmd`. It opens a deliberately small diagnostic client with backend status, one prompt, one response, cognitive-control fields (goal, action, directive, hygiene, realization mode, continuity, episode), and raw request details. By default it uses a temporary state directory so diagnostic messages do not alter the trained brain; set `AI_ASTRA_TEST_USE_LIVE_STATE=1` before launching when you explicitly want to test the live state.
 
-Headless commands run from the directory *above* `ai_astra_main`:
+Headless commands, from this folder:
 
 ```powershell
-py -3 -m ai_astra_main.headless_api status
-py -3 -m ai_astra_main.headless_api generate "What have you learned about AI Astra?"
-py -3 -m ai_astra_main.headless_api train "D:\path\to\training"
-py -3 -m ai_astra_main.headless_api serve-http --port 8765
+.venv\Scripts\python -m headless_api status
+.venv\Scripts\python -m headless_api generate "What have you learned about AI Astra?"
+.venv\Scripts\python -m headless_api train "D:\path\to\training"
+.venv\Scripts\python -m headless_api serve-http --port 8765
 ```
 
 Training coalesces repeated observations into large sorted upserts, accumulates evidence instead of replacing it, and fingerprints completed files in `training_history`. Re-running the same corpus skips it unless its normalized content changes.
@@ -51,13 +65,13 @@ The Electron client gives each backend process a random session secret. Manual l
 
 ## Verify changes safely
 
-The runtime stores learned state beside the source code (`ai_astra_phoenix_brain.db` and `ai_astra_*.json`). Set `AI_ASTRA_STATE_DIR` to keep state elsewhere. Desktop smoke tests automatically use and remove a temporary state directory, so they never train the production brain.
+The runtime stores learned state beside the source code (`ai_astra_brain.db` and `ai_astra_*.json`). Set `AI_ASTRA_STATE_DIR` to keep state elsewhere. Desktop smoke tests automatically use and remove a temporary state directory, so they never train the production brain.
 
 ```powershell
-py -3 -m unittest discover -s tests -v
-py -3 evaluation_harness.py --suite symbolic --label local_check --require-pass --baseline evaluation_baseline.json
-py -3 evaluation_harness.py --suite generative --label generative_check --require-pass --baseline evaluation_baseline_generative.json
-py -3 evaluation_harness.py --suite gate --label gate_check --require-pass
+.venv\Scripts\python -m unittest discover -s tests -v
+.venv\Scripts\python evaluation_harness.py --suite symbolic --label local_check --require-pass --baseline evaluation_baseline.json
+.venv\Scripts\python evaluation_harness.py --suite generative --label generative_check --require-pass --baseline evaluation_baseline_generative.json
+.venv\Scripts\python evaluation_harness.py --suite gate --label gate_check --require-pass
 cd standalone_frontend
 npm run smoke -- all
 ```
@@ -77,8 +91,8 @@ Both full suites run without learning from their answers, emit an explicit pass/
 Live chat still uses cheap hygiene gates. Intentional durable learning can be proposed through a clone trial:
 
 ```powershell
-py -3 -m ai_astra_main.headless_api gated-learn --user "How could curiosity change answer length?" --response "Curiosity can lengthen exploration while confidence is low, then shorten answers once a coherent relation is found." --dry-run
-py -3 -m ai_astra_main.headless_api gated-learn --user "..." --response "..." 
+.venv\Scripts\python -m headless_api gated-learn --user "How could curiosity change answer length?" --response "Curiosity can lengthen exploration while confidence is low, then shorten answers once a coherent relation is found." --dry-run
+.venv\Scripts\python -m headless_api gated-learn --user "..." --response "..." 
 ```
 
 The flow is: hygiene → learn on an in-memory clone → re-run the gate suite → compare pre/post (and the generative baseline when present) → commit to the live brain only if accepted. Use `--dry-run` to inspect the decision without writing.
@@ -106,7 +120,7 @@ Repeated TEXT n-gram contexts inflate SQLite. AI Astra now supports an optional 
 - Headless batch migrator:
 
 ```powershell
-py -3 headless_api.py migrate-vocab --batch-size 5000 --max-batches 10
+.venv\Scripts\python headless_api.py migrate-vocab --batch-size 5000 --max-batches 10
 ```
 
 The Norn cognitive core now also **reads** persisted `cognitive_goals` progress/priority when choosing the next goal, so successful strategies can bias later behavior instead of being write-only bookkeeping.
@@ -123,7 +137,7 @@ Both fields appear in the Electron provenance panel and the diagnostic test clie
 ### Deferred follow-on work
 
 - Finish large-brain vocab-ID migration in controlled batches, then optionally switch `vocab_id_storage_mode` to `ids` and drop redundant TEXT chain pages once verified.
-- Keep new work on the headless/Electron path; avoid growing the legacy `ai_astra_phoenix_desktop.py` monolith.
+- Keep new work on the headless/Electron path; avoid growing the legacy `ai_astra_desktop.py` monolith.
 
 
 ## Astra Wisp pet interface

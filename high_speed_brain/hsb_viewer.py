@@ -43,7 +43,7 @@ class HSBBrainViewer(QMainWindow):
         
     def setup_ui(self):
         """Setup the main UI"""
-        self.setWindowTitle("HSB Brain Viewer & Editor")
+        self.setWindowTitle("High-Speed Brain Viewer & Editor")
         self.setGeometry(100, 100, 1400, 900)
         
         # Central widget with tabs

@@ -4,11 +4,11 @@ Claude, 2026-09-30. The owner's goals, in her words: Astra's personality starts 
 
 ## What decides her personality today
 
-Nothing yet. `bridge.py` is only transport: it carries text between a "brain" and the VRChat chatbox. As first planned, that brain was **AI Astra's backend** (`generate_response` on AI Astra's trained SQLite brain). If Astra were connected to it, she would literally speak as AI Astra. **Given the owner's goal, the bridge should not be pointed at AI Astra's brain.** The bridge stays; only the brain behind it changes.
+Nothing yet. `embodiment.py` is only transport: it carries text between a "brain" and the VRChat chatbox. As first planned, that brain was **AI Astra's backend** (`generate_response` on AI Astra's trained SQLite brain). If Astra were connected to it, she would literally speak as AI Astra. **Given the owner's goal, the embodiment layer should not be pointed at AI Astra's brain.** The embodiment layer stays; only the brain behind it changes.
 
 ## Existing reference: `C:\ai_astra\ai_astra_voice` (AI Astra Voice)
 
-An earlier Claude session built **AI Astra Voice**: AI Astra in the VRChat chatbox. `persona.md` is her personality. AI Astra's `cognitive_core.py` (imported read-only) picks a strategy. Claude (Haiku by default, via the owner's `ANTHROPIC_API_KEY` environment variable) writes the words. Her own state lives in `ai_astra_voice\state\mai_voice.db`. It has a PG-13 filter and says she's an AI.
+An earlier Claude session built **AI Astra Voice**: AI Astra in the VRChat chatbox. `persona.md` is her personality. AI Astra's `cognitive_core.py` (imported read-only) picks a strategy. Claude (Haiku by default, via the owner's `ANTHROPIC_API_KEY` environment variable) writes the words. Her own state lives in its own state folder (`voice/state/`, never committed). It has a PG-13 filter and says she's an AI.
 
 That's the same *shape* Astra could use. Astra would get **her own** persona file and state, and would drop AI Astra's cognitive core and AI Astra's brain. That way she starts from scratch rather than copying AI Astra.
 
@@ -53,7 +53,7 @@ There are two different things here. The proposal is to do both, in order.
 - *Her own movement in the owner's style* (the real goal): Astra picks from and blends the owner's recorded motions (idle, walk, dances, head tilts, how she looks around) based on what's happening.
   - Later, a motion model trained on the recordings could generate new movement in the owner's style.
   - This is a longer research project. The recordings from step A are the only irreplaceable input.
-- "Continuously" means an always-running service. The bridge deliberately doesn't do that yet (the handoff scope said no background service or automatic movement), so it needs its own design and the owner's go-ahead.
+- "Continuously" means an always-running service. The embodiment layer deliberately doesn't do that yet (the handoff scope said no background service or automatic movement), so it needs its own design and the owner's go-ahead.
 
 ## Guardrails proposed for an AI wearing this avatar
 

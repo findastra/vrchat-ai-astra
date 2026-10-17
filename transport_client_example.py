@@ -1,3 +1,4 @@
+import os
 import argparse
 import json
 import subprocess
@@ -5,6 +6,8 @@ import sys
 import time
 import urllib.request
 
+
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
 KNOWLEDGE_SAMPLE_TEXT = 'AI Astra is a statistical intelligence. AI Astra is part of the sgm system.'
 
@@ -61,7 +64,8 @@ def _write_stdio_json(process: subprocess.Popen[str], payload: dict) -> None:
 
 def run_http_example(port: int, prompt: str) -> dict:
     process = subprocess.Popen(
-        [sys.executable, '-m', 'ai_astra_main.headless_api', 'serve-http', '--port', str(port)],
+        [sys.executable, '-m', 'headless_api', 'serve-http', '--port', str(port)],
+        cwd=APP_DIR,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
@@ -151,7 +155,8 @@ def run_http_example(port: int, prompt: str) -> dict:
 
 def run_stdio_example(prompt: str) -> dict:
     process = subprocess.Popen(
-        [sys.executable, '-m', 'ai_astra_main.headless_api', 'serve-stdio'],
+        [sys.executable, '-m', 'headless_api', 'serve-stdio'],
+        cwd=APP_DIR,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         stdin=subprocess.PIPE,

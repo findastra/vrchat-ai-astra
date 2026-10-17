@@ -1,4 +1,4 @@
-"""Offline tests for bridge.py using loopback stubs on ephemeral ports.
+"""Offline tests for embodiment.py using loopback stubs on ephemeral ports.
 
 Nothing here talks to a real AI Astra instance or to VRChat's live OSC port 9000.
 Run from the astra-vrchat folder:  python -m unittest discover -s tests -v
@@ -24,7 +24,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-import bridge  # noqa: E402
+import embodiment  # noqa: E402
 
 LIVE_VRCHAT_PORT = 9000
 TOKEN = "test-token-not-real"
@@ -94,7 +94,7 @@ class HttpTests(unittest.TestCase):
         patcher = mock.patch.dict(os.environ, {}, clear=False)
         patcher.start()
         self.addCleanup(patcher.stop)
-        os.environ.pop(bridge.TOKEN_ENVIRONMENT_VARIABLE, None)
+        os.environ.pop(embodiment.TOKEN_ENVIRONMENT_VARIABLE, None)
 
     # --- health -------------------------------------------------------------
     def test_health_summary_only_exposes_safe_fields(self):
@@ -104,20 +104,20 @@ class HttpTests(unittest.TestCase):
              "brain_rows": 123},
             None,
         )
-        summary = bridge.get_health(self.stub.endpoint)
+        summary = embodiment.get_health(self.stub.endpoint)
         self.assertEqual(summary, {"ok": True, "transport": "http", "api_name": "astra", "api_version": "2"})
         self.assertEqual(self.stub.requests[0]["method"], "GET")
         self.assertEqual(self.stub.requests[0]["path"], "/health")
 
     def test_health_not_ok(self):
         self.stub.behaviour = lambda h, b: (200, {"ok": False}, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "ok=true"):
-            bridge.get_health(self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "ok=true"):
+            embodiment.get_health(self.stub.endpoint)
 
     # --- ask: contract ------------------------------------------------------
     def test_ask_sends_exact_contract_and_returns_response(self):
         self.stub.behaviour = echo_success("Hi Astra ✨")
-        self.assertEqual(bridge.ask_ai_astra("hello ✨", self.stub.endpoint), "Hi Astra ✨")
+        self.assertEqual(embodiment.ask_ai_astra("hello ✨", self.stub.endpoint), "Hi Astra ✨")
         request = self.stub.requests[0]
         self.assertEqual((request["method"], request["path"]), ("POST", "/api"))
         body = json.loads(request["body"].decode("utf-8"))
@@ -130,20 +130,20 @@ class HttpTests(unittest.TestCase):
 
     def test_ask_uses_unique_ids(self):
         self.stub.behaviour = echo_success()
-        bridge.ask_ai_astra("one", self.stub.endpoint)
-        bridge.ask_ai_astra("two", self.stub.endpoint)
+        embodiment.ask_ai_astra("one", self.stub.endpoint)
+        embodiment.ask_ai_astra("two", self.stub.endpoint)
         ids = [json.loads(r["body"])["id"] for r in self.stub.requests]
         self.assertNotEqual(ids[0], ids[1])
 
     def test_ask_rejects_mismatched_id(self):
         self.stub.behaviour = lambda h, b: (200, {"id": "someone-else", "ok": True, "result": {"response": "x"}}, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "id did not match"):
-            bridge.ask_ai_astra("hello", self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "id did not match"):
+            embodiment.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_rejects_missing_id(self):
         self.stub.behaviour = lambda h, b: (200, {"ok": True, "result": {"response": "x"}}, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "id did not match"):
-            bridge.ask_ai_astra("hello", self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "id did not match"):
+            embodiment.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_requires_ok_strictly_true(self):
         for ok_value in (False, "true", 1, None):
@@ -153,8 +153,8 @@ class HttpTests(unittest.TestCase):
                     return 200, {"id": request_id, "ok": ok_value, "result": {"response": "x"}}, None
 
                 self.stub.behaviour = behaviour
-                with self.assertRaisesRegex(bridge.BridgeError, "failed"):
-                    bridge.ask_ai_astra("hello", self.stub.endpoint)
+                with self.assertRaisesRegex(embodiment.EmbodimentError, "failed"):
+                    embodiment.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_rejects_bad_result_shapes(self):
         for result in (None, "text", {"response": 5}, {"text": "x"}, []):
@@ -163,72 +163,72 @@ class HttpTests(unittest.TestCase):
                     return 200, {"id": json.loads(b)["id"], "ok": True, "result": result}, None
 
                 self.stub.behaviour = behaviour
-                with self.assertRaisesRegex(bridge.BridgeError, "text result"):
-                    bridge.ask_ai_astra("hello", self.stub.endpoint)
+                with self.assertRaisesRegex(embodiment.EmbodimentError, "text result"):
+                    embodiment.ask_ai_astra("hello", self.stub.endpoint)
 
     def test_ask_input_validation_makes_no_request(self):
-        for text in ("", "   \n", "x" * (bridge.MAX_ASK_CHARS + 1)):
+        for text in ("", "   \n", "x" * (embodiment.MAX_ASK_CHARS + 1)):
             with self.subTest(length=len(text)):
-                with self.assertRaises(bridge.BridgeError):
-                    bridge.ask_ai_astra(text, self.stub.endpoint)
+                with self.assertRaises(embodiment.EmbodimentError):
+                    embodiment.ask_ai_astra(text, self.stub.endpoint)
         self.assertEqual(self.stub.requests, [])
 
     # --- auth ---------------------------------------------------------------
     def test_token_header_sent_when_configured_and_never_echoed(self):
-        os.environ[bridge.TOKEN_ENVIRONMENT_VARIABLE] = TOKEN
+        os.environ[embodiment.TOKEN_ENVIRONMENT_VARIABLE] = TOKEN
         self.stub.behaviour = echo_success()
-        bridge.ask_ai_astra("hello", self.stub.endpoint)
+        embodiment.ask_ai_astra("hello", self.stub.endpoint)
         received = {k.lower(): v for k, v in self.stub.requests[0]["headers"].items()}  # HTTP header names are case-insensitive
         self.assertEqual(received.get("x-aiastra-token"), TOKEN)
 
         self.stub.behaviour = lambda h, b: (401, {"ok": False, "error": "unauthorized"}, None)
-        with self.assertRaises(bridge.BridgeError) as caught:
-            bridge.ask_ai_astra("hello", self.stub.endpoint)
+        with self.assertRaises(embodiment.EmbodimentError) as caught:
+            embodiment.ask_ai_astra("hello", self.stub.endpoint)
         self.assertIn("401", str(caught.exception))
-        self.assertIn(bridge.TOKEN_ENVIRONMENT_VARIABLE, str(caught.exception))
+        self.assertIn(embodiment.TOKEN_ENVIRONMENT_VARIABLE, str(caught.exception))
         self.assertNotIn(TOKEN, str(caught.exception))
 
     def test_forbidden_status(self):
         self.stub.behaviour = lambda h, b: (403, {"ok": False}, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "403"):
-            bridge.get_health(self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "403"):
+            embodiment.get_health(self.stub.endpoint)
 
     # --- redirects ----------------------------------------------------------
     def test_redirect_refused_and_token_not_forwarded(self):
         other = StubAIAstra()
         self.addCleanup(other.close)
         other.behaviour = lambda h, b: (200, {"ok": True}, None)
-        os.environ[bridge.TOKEN_ENVIRONMENT_VARIABLE] = TOKEN
+        os.environ[embodiment.TOKEN_ENVIRONMENT_VARIABLE] = TOKEN
         for status in (301, 302, 303, 307, 308):
             with self.subTest(status=status):
                 self.stub.behaviour = lambda h, b, s=status: (s, {}, {"Location": other.endpoint + "/health"})
-                with self.assertRaisesRegex(bridge.BridgeError, "redirect refused"):
-                    bridge.get_health(self.stub.endpoint)
+                with self.assertRaisesRegex(embodiment.EmbodimentError, "redirect refused"):
+                    embodiment.get_health(self.stub.endpoint)
         self.assertEqual(other.requests, [], "redirect target must never be contacted")
 
     # --- other failures -----------------------------------------------------
     def test_server_error(self):
         self.stub.behaviour = lambda h, b: (500, {"ok": False}, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "HTTP 500"):
-            bridge.get_health(self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "HTTP 500"):
+            embodiment.get_health(self.stub.endpoint)
 
     def test_non_200_success_status(self):
         self.stub.behaviour = lambda h, b: (202, {"ok": True}, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "HTTP 202"):
-            bridge.get_health(self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "HTTP 202"):
+            embodiment.get_health(self.stub.endpoint)
 
     def test_invalid_json_and_non_object(self):
         for raw in (b"not json", b"\xff\xfe", b"[1,2]", b'"text"'):
             with self.subTest(raw=raw):
                 self.stub.behaviour = lambda h, b, raw=raw: (200, raw, None)
-                with self.assertRaisesRegex(bridge.BridgeError, "invalid"):
-                    bridge.get_health(self.stub.endpoint)
+                with self.assertRaisesRegex(embodiment.EmbodimentError, "invalid"):
+                    embodiment.get_health(self.stub.endpoint)
 
     def test_oversized_response(self):
-        big = b'{"ok":true,"pad":"' + b"a" * (bridge.MAX_HTTP_RESPONSE_BYTES + 10) + b'"}'
+        big = b'{"ok":true,"pad":"' + b"a" * (embodiment.MAX_HTTP_RESPONSE_BYTES + 10) + b'"}'
         self.stub.behaviour = lambda h, b: (200, big, None)
-        with self.assertRaisesRegex(bridge.BridgeError, "byte limit"):
-            bridge.get_health(self.stub.endpoint)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "byte limit"):
+            embodiment.get_health(self.stub.endpoint)
 
     def test_timeout(self):
         def slow(h, b):
@@ -236,20 +236,20 @@ class HttpTests(unittest.TestCase):
             return 200, {"ok": True}, None
 
         self.stub.behaviour = slow
-        with self.assertRaisesRegex(bridge.BridgeError, "timed out"):
-            bridge._request_json(self.stub.endpoint, "/health", "GET", timeout=0.2)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "timed out"):
+            embodiment._request_json(self.stub.endpoint, "/health", "GET", timeout=0.2)
 
     def test_proxy_environment_is_ignored(self):
         self.stub.behaviour = lambda h, b: (200, {"ok": True}, None)
         with mock.patch.dict(os.environ, {"HTTP_PROXY": "http://127.0.0.1:1", "http_proxy": "http://127.0.0.1:1",
                                           "NO_PROXY": "", "no_proxy": ""}):
-            self.assertEqual(bridge.get_health(self.stub.endpoint), {"ok": True})
+            self.assertEqual(embodiment.get_health(self.stub.endpoint), {"ok": True})
 
     def test_only_two_operations_allowed(self):
         for path, method in (("/api", "GET"), ("/health", "POST"), ("/admin", "GET"), ("/api/../x", "POST")):
             with self.subTest(path=path, method=method):
-                with self.assertRaises(bridge.BridgeError):
-                    bridge._request_json(self.stub.endpoint, path, method, {} if method == "POST" else None)
+                with self.assertRaises(embodiment.EmbodimentError):
+                    embodiment._request_json(self.stub.endpoint, path, method, {} if method == "POST" else None)
         self.assertEqual(self.stub.requests, [])
 
 
@@ -258,8 +258,8 @@ class RawSocketFailureTests(unittest.TestCase):
         with socket.socket() as probe:
             probe.bind(("127.0.0.1", 0))
             port = probe.getsockname()[1]
-        with self.assertRaisesRegex(bridge.BridgeError, "Could not reach"):
-            bridge.get_health(f"http://127.0.0.1:{port}")
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "Could not reach"):
+            embodiment.get_health(f"http://127.0.0.1:{port}")
 
     def test_malformed_http_response(self):
         server = socket.socket()
@@ -275,15 +275,15 @@ class RawSocketFailureTests(unittest.TestCase):
                 connection.sendall(b"GARBAGE\r\n\r\n")
 
         threading.Thread(target=serve, daemon=True).start()
-        with self.assertRaisesRegex(bridge.BridgeError, "malformed|Could not reach"):
-            bridge.get_health(f"http://127.0.0.1:{port}")
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "malformed|Could not reach"):
+            embodiment.get_health(f"http://127.0.0.1:{port}")
 
 
 class EndpointTests(unittest.TestCase):
     def test_accepted_and_normalized(self):
-        self.assertEqual(bridge.normalize_endpoint("http://127.0.0.1:8765"), "http://127.0.0.1:8765")
-        self.assertEqual(bridge.normalize_endpoint("http://localhost:8765/"), "http://127.0.0.1:8765")
-        self.assertEqual(bridge.normalize_endpoint("HTTP://LOCALHOST"), "http://127.0.0.1:80")
+        self.assertEqual(embodiment.normalize_endpoint("http://127.0.0.1:8765"), "http://127.0.0.1:8765")
+        self.assertEqual(embodiment.normalize_endpoint("http://localhost:8765/"), "http://127.0.0.1:8765")
+        self.assertEqual(embodiment.normalize_endpoint("HTTP://LOCALHOST"), "http://127.0.0.1:80")
 
     def test_rejected(self):
         for endpoint in (
@@ -293,8 +293,8 @@ class EndpointTests(unittest.TestCase):
             "http://[::1]:8765", "ftp://127.0.0.1", "http://127.0.0.1.evil.com:8765",
         ):
             with self.subTest(endpoint=endpoint):
-                with self.assertRaises(bridge.BridgeError):
-                    bridge.normalize_endpoint(endpoint)
+                with self.assertRaises(embodiment.EmbodimentError):
+                    embodiment.normalize_endpoint(endpoint)
 
 
 def decode_osc(packet: bytes) -> list:
@@ -324,35 +324,35 @@ def decode_osc(packet: bytes) -> list:
 
 class ChatTests(unittest.TestCase):
     def test_length_limit_in_utf16_units(self):
-        self.assertEqual(bridge.validate_chat_text("a" * 144)[1], 144)
-        with self.assertRaisesRegex(bridge.BridgeError, "145 UTF-16"):
-            bridge.validate_chat_text("a" * 145)
+        self.assertEqual(embodiment.validate_chat_text("a" * 144)[1], 144)
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "145 UTF-16"):
+            embodiment.validate_chat_text("a" * 145)
         # Emoji outside the BMP count as two UTF-16 units each.
-        self.assertEqual(bridge.validate_chat_text("💖" * 72)[1], 144)
-        with self.assertRaises(bridge.BridgeError):
-            bridge.validate_chat_text("💖" * 73)
+        self.assertEqual(embodiment.validate_chat_text("💖" * 72)[1], 144)
+        with self.assertRaises(embodiment.EmbodimentError):
+            embodiment.validate_chat_text("💖" * 73)
         # BMP accented and CJK characters count once.
-        self.assertEqual(bridge.validate_chat_text("é" * 144)[1], 144)
-        self.assertEqual(bridge.validate_chat_text("星" * 144)[1], 144)
+        self.assertEqual(embodiment.validate_chat_text("é" * 144)[1], 144)
+        self.assertEqual(embodiment.validate_chat_text("星" * 144)[1], 144)
 
     def test_line_limit_and_newline_normalization(self):
-        text, _, lines = bridge.validate_chat_text("\r\n".join("abcdefghi"))
+        text, _, lines = embodiment.validate_chat_text("\r\n".join("abcdefghi"))
         self.assertEqual(lines, 9)
         self.assertNotIn("\r", text)
-        self.assertEqual(bridge.validate_chat_text("a\rb")[0], "a\nb")
-        with self.assertRaisesRegex(bridge.BridgeError, "9 lines"):
-            bridge.validate_chat_text("\n".join("abcdefghij"))
+        self.assertEqual(embodiment.validate_chat_text("a\rb")[0], "a\nb")
+        with self.assertRaisesRegex(embodiment.EmbodimentError, "9 lines"):
+            embodiment.validate_chat_text("\n".join("abcdefghij"))
 
     def test_rejects_blank_nul_controls_and_bad_unicode(self):
         for text in ("", "  \n ", "a\0b", "a\x1b[31mred", "tab\there", "\x85next", "bad \ud83d surrogate"):
             with self.subTest(text=repr(text)):
-                with self.assertRaises(bridge.BridgeError):
-                    bridge.validate_chat_text(text)
-        with self.assertRaises(bridge.BridgeError):
-            bridge.validate_chat_text(None)  # type: ignore[arg-type]
+                with self.assertRaises(embodiment.EmbodimentError):
+                    embodiment.validate_chat_text(text)
+        with self.assertRaises(embodiment.EmbodimentError):
+            embodiment.validate_chat_text(None)  # type: ignore[arg-type]
 
     def test_osc_packet_exact_bytes(self):
-        packet, *_ = bridge.build_osc_packet("hi")
+        packet, *_ = embodiment.build_osc_packet("hi")
         self.assertEqual(
             packet,
             b"/chatbox/input\0\0" + b",sFF\0\0\0\0" + b"hi\0\0",
@@ -361,13 +361,13 @@ class ChatTests(unittest.TestCase):
     def test_osc_padding_for_every_length_mod_four(self):
         for length in range(1, 9):
             with self.subTest(length=length):
-                packet, *_ = bridge.build_osc_packet("x" * length)
+                packet, *_ = embodiment.build_osc_packet("x" * length)
                 self.assertEqual(len(packet) % 4, 0)
                 self.assertEqual(decode_osc(packet), [True, "/chatbox/input", ",sFF", "x" * length, False, False])
 
     def test_osc_unicode_round_trip(self):
         text = "Astra ✨ こんにちは\nñ 💖"
-        packet, normalized, units, lines = bridge.build_osc_packet(text)
+        packet, normalized, units, lines = embodiment.build_osc_packet(text)
         self.assertEqual(decode_osc(packet)[3], text)
         self.assertIn("✨".encode("utf-8"), packet)
         self.assertEqual(lines, 2)
@@ -399,22 +399,22 @@ class NoNetworkGuard:
 class PreviewTests(unittest.TestCase):
     def test_preview_makes_no_network_calls(self):
         with NoNetworkGuard():
-            result = bridge.preview_chat("Hello ✨")
+            result = embodiment.preview_chat("Hello ✨")
             stdout = io.StringIO()
             with contextlib.redirect_stdout(stdout):
-                code = bridge.main(["preview", "Hello ✨"])
+                code = embodiment.main(["preview", "Hello ✨"])
         self.assertEqual(code, 0)
         printed = json.loads(stdout.getvalue())
         self.assertEqual(printed, result)
         self.assertEqual(result["immediate_send"], False)
         self.assertEqual(result["notification"], False)
         self.assertEqual(result["type_tags"], ",sFF")
-        self.assertEqual(bytes.fromhex(result["osc_packet_hex"]), bridge.build_osc_packet("Hello ✨")[0])
+        self.assertEqual(bytes.fromhex(result["osc_packet_hex"]), embodiment.build_osc_packet("Hello ✨")[0])
 
     def test_guard_actually_blocks(self):
         with NoNetworkGuard():
             with self.assertRaises(AssertionError):
-                bridge.queue_chat("x", port=9)
+                embodiment.queue_chat("x", port=9)
 
 
 class UdpStub:
@@ -439,10 +439,10 @@ class QueueTests(unittest.TestCase):
         self.addCleanup(self.udp.close)
 
     def test_queue_sends_exactly_one_draft_packet(self):
-        sent = bridge.queue_chat("Queued ✨", port=self.udp.port)
+        sent = embodiment.queue_chat("Queued ✨", port=self.udp.port)
         data = self.udp.receive()
         self.assertEqual(sent, len(data))
-        self.assertEqual(data, bridge.build_osc_packet("Queued ✨")[0])
+        self.assertEqual(data, embodiment.build_osc_packet("Queued ✨")[0])
         self.assertEqual(decode_osc(data)[2:], [",sFF", "Queued ✨", False, False])
         self.udp.sock.settimeout(0.2)
         with self.assertRaises(socket.timeout):
@@ -451,7 +451,7 @@ class QueueTests(unittest.TestCase):
     def test_queue_cli_with_stub_port(self):
         stdout = io.StringIO()
         with contextlib.redirect_stdout(stdout):
-            code = bridge.main(["queue", "CLI test", "--port", str(self.udp.port)])
+            code = embodiment.main(["queue", "CLI test", "--port", str(self.udp.port)])
         self.assertEqual(code, 0)
         self.assertEqual(decode_osc(self.udp.receive())[3], "CLI test")
         self.assertIn("no delivery receipt", stdout.getvalue())
@@ -459,8 +459,8 @@ class QueueTests(unittest.TestCase):
     def test_queue_validation_sends_nothing(self):
         for text in ("a" * 145, "", "\n".join("abcdefghij")):
             with self.subTest(length=len(text)):
-                with self.assertRaises(bridge.BridgeError):
-                    bridge.queue_chat(text, port=self.udp.port)
+                with self.assertRaises(embodiment.EmbodimentError):
+                    embodiment.queue_chat(text, port=self.udp.port)
         self.udp.sock.settimeout(0.2)
         with self.assertRaises(socket.timeout):
             self.udp.receive()
@@ -468,13 +468,13 @@ class QueueTests(unittest.TestCase):
     def test_queue_rejects_bad_ports(self):
         for port in (0, 65536, -1, True, "9000"):
             with self.subTest(port=port):
-                with self.assertRaises(bridge.BridgeError):
-                    bridge.queue_chat("x", port=port)  # type: ignore[arg-type]
+                with self.assertRaises(embodiment.EmbodimentError):
+                    embodiment.queue_chat("x", port=port)  # type: ignore[arg-type]
 
     def test_default_queue_port_is_vrchat_input(self):
         # Checked by value only; the tests never send to the live port.
-        self.assertEqual(bridge.OSC_PORT, LIVE_VRCHAT_PORT)
-        self.assertEqual(bridge.build_parser().parse_args(["queue", "x"]).port, LIVE_VRCHAT_PORT)
+        self.assertEqual(embodiment.OSC_PORT, LIVE_VRCHAT_PORT)
+        self.assertEqual(embodiment.build_parser().parse_args(["queue", "x"]).port, LIVE_VRCHAT_PORT)
 
 
 class CliTests(unittest.TestCase):
@@ -485,7 +485,7 @@ class CliTests(unittest.TestCase):
     def run_cli(self, argv):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = bridge.main(argv)
+            code = embodiment.main(argv)
         return code, out.getvalue(), err.getvalue()
 
     def test_status(self):
@@ -496,7 +496,7 @@ class CliTests(unittest.TestCase):
 
     def test_ask_escapes_terminal_controls_and_does_not_queue(self):
         self.stub.behaviour = echo_success("line1\n\x1b[2Jclear\ttab")
-        with mock.patch.object(bridge, "queue_chat", side_effect=AssertionError("ask must not queue")):
+        with mock.patch.object(embodiment, "queue_chat", side_effect=AssertionError("ask must not queue")):
             code, out, err = self.run_cli(["ask", "hi", "--endpoint", self.stub.endpoint])
         self.assertEqual(code, 0)
         self.assertEqual(out, "AI Astra: line1\n\\x1b[2Jclear\ttab\n")
@@ -511,8 +511,8 @@ class CliTests(unittest.TestCase):
 
 
 class DependencyTests(unittest.TestCase):
-    def test_bridge_imports_only_standard_library(self):
-        tree = ast.parse((ROOT / "bridge.py").read_text(encoding="utf-8"))
+    def test_embodiment_imports_only_standard_library(self):
+        tree = ast.parse((ROOT / "embodiment.py").read_text(encoding="utf-8"))
         modules = set()
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):

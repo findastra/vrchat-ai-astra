@@ -51,9 +51,9 @@ STATE_DIR = os.path.abspath(os.environ.get('AI_ASTRA_STATE_DIR', APP_DIR))
 os.makedirs(STATE_DIR, exist_ok=True)
 TRAINING_DIR = os.path.join(STATE_DIR, 'training')
 
-DB_FILE = os.path.join(STATE_DIR, 'ai_astra_phoenix_brain.db')
-NN_MODEL_FILE = os.path.join(STATE_DIR, 'ai_astra_phoenix_model.json')
-VOCAB_FILE = os.path.join(STATE_DIR, 'ai_astra_phoenix_vocab.json')
+DB_FILE = os.path.join(STATE_DIR, 'ai_astra_brain.db')
+NN_MODEL_FILE = os.path.join(STATE_DIR, 'ai_astra_model.json')
+VOCAB_FILE = os.path.join(STATE_DIR, 'ai_astra_vocab.json')
 ATTENTION_FILE = os.path.join(STATE_DIR, 'ai_astra_attention_weights.json')
 CONTEXT_SCORES_FILE = os.path.join(STATE_DIR, 'ai_astra_context_scores.json')
 SEMANTIC_CLUSTERS_FILE = os.path.join(STATE_DIR, 'ai_astra_semantic_clusters.json')
@@ -3216,15 +3216,15 @@ class HybridBrain:
         if use_hsb_backend:
             try:
                 _here = os.path.dirname(os.path.abspath(__file__))
-                _newtype = os.path.join(_here, 'Newtype')
-                if _newtype not in sys.path and os.path.isdir(_newtype):
-                    sys.path.insert(0, _newtype)
-                from brain_backend_newtype import NewtypeBrainBackend
+                _high_speed = os.path.join(_here, 'high_speed_brain')
+                if _high_speed not in sys.path and os.path.isdir(_high_speed):
+                    sys.path.insert(0, _high_speed)
+                from brain_backend_high_speed import HighSpeedBrainBackend
                 base_path = os.path.dirname(os.path.abspath(db_file)) if db_file != ':memory:' else '.'
-                hsb_path = (db_file.replace('.db', '.hsb') if db_file.endswith('.db') else os.path.join(base_path, 'ai_astra_phoenix_brain.hsb'))
-                self._storage_backend = NewtypeBrainBackend(base_path=base_path or '.', hsb_file=hsb_path, use_hsb_persistence=not is_clone)
+                hsb_path = (db_file.replace('.db', '.hsb') if db_file.endswith('.db') else os.path.join(base_path, 'ai_astra_brain.hsb'))
+                self._storage_backend = HighSpeedBrainBackend(base_path=base_path or '.', hsb_file=hsb_path, use_hsb_persistence=not is_clone)
                 if not is_clone:
-                    print("HybridBrain: using Newtype HSB backend for patterns/associations")
+                    print("HybridBrain: using the high-speed brain (HSB) backend for patterns/associations")
                     if not os.path.exists(hsb_path) and db_file != ':memory:' and os.path.exists(db_file):
                         mig_con = None
                         try:
@@ -5308,7 +5308,7 @@ class HybridBrain:
         text_terms = {term for term in self.clean_text(cleaned) if len(term) > 2}
         topical_terms = {
             term for term in query_terms
-            if term not in {'astra', 'you', 'your', 'phoenix', 'what', 'how', 'why', 'tell', 'about', 'something', 'interesting'}
+            if term not in {'astra', 'you', 'your', 'what', 'how', 'why', 'tell', 'about', 'something', 'interesting'}
         }
         active_terms = topical_terms or query_terms
         overlap_count = len(active_terms.intersection(text_terms))
@@ -7093,8 +7093,8 @@ def build_backend_api_config():
     return {
         'app_dir': APP_DIR,
         'brain_factory': HybridBrain,
-        'runtime_module': 'ai_astra_main.backend_runtime',
-        'desktop_module': 'ai_astra_main.backend_runtime',
+        'runtime_module': 'backend_runtime',
+        'desktop_module': 'backend_runtime',
         'get_system_tier': get_system_tier,
         'get_hardware_profile': get_hardware_profile,
         'context_levels': CONTEXT_LEVELS,
