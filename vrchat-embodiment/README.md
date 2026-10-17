@@ -1,6 +1,6 @@
-# VRChat bridge
+# VRChat Embodiment
 
-Local preparation for AI Astra in VRChat: a small text bridge between AI Astra's
+Local preparation for AI Astra in VRChat: a small embodiment layer between AI Astra's
 HTTP backend and the VRChat chatbox, plus a read-only inventory tool for the Meep avatar
 package. Nothing here is live yet.
 
@@ -8,7 +8,7 @@ package. Nothing here is live yet.
 
 | Piece | State |
 |---|---|
-| `bridge.py` | Reviewed and finished. Standard library only. 40 offline tests pass. Never run against real AI Astra or real VRChat. |
+| `embodiment.py` | Reviewed and finished. Standard library only. 40 offline tests pass. Never run against real AI Astra or real VRChat. |
 | `tools/inspect_unitypackage.py` | Written and tested on a synthetic package (9 tests pass). Reports a lock assessment. **Not yet run on Meep or Poppy.** |
 | `docs/meep-inventory.md` | Observed facts from Meep's UPLOAD INFORMATION.txt, plus a proposed parameter map (assumptions marked). |
 | `docs/poppy-inventory.md` | Fallback base if Meep's license key doesn't work (owner rule): what's in the Poppy folder, cautions, scan commands, parameter map. |
@@ -27,23 +27,23 @@ $py = "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies
 & $py -m unittest discover -s tests -v
 
 # Offline: build and show a chatbox packet, no network
-& $py bridge.py preview "Hi, I'm Astra ✨"
+& $py embodiment.py preview "Hi, I'm Astra ✨"
 
 # AI Astra health (GET /health on 127.0.0.1:8765 unless --endpoint is given)
-& $py bridge.py status
+& $py embodiment.py status
 
 # Ask AI Astra. This calls generate_response, which can change AI Astra's conversation/learning state.
 # The answer is printed only. It is never forwarded to VRChat.
-& $py bridge.py ask "hello"
+& $py embodiment.py ask "hello"
 
 # Send ONE reviewed line to VRChat as a chatbox draft (immediate=false, no notification sound).
 # The owner still presses send in VRChat.
-& $py bridge.py queue "Hi, I'm Astra ✨"
+& $py embodiment.py queue "Hi, I'm Astra ✨"
 ```
 
 If AI Astra needs a token, set it for the session only: `$env:AI_ASTRA_BACKEND_AUTH_TOKEN = "..."`. Don't write it to a file.
 
-## What the bridge does and doesn't do
+## What the embodiment layer does and doesn't do
 
 - `status`: GET `/health`. Prints only `ok`, `transport`, `api_name`, `api_version`.
 - `ask`: POST `/api` `{"id","method":"generate_response","params":{"user_input"}}`. Requires the same `id` back and `ok: true`, and `result.response` must be a string. Terminal control characters in the reply are escaped before printing.
@@ -53,7 +53,7 @@ If AI Astra needs a token, set it for the session only: `$env:AI_ASTRA_BACKEND_A
 - Chat limits: 144 UTF-16 units (an emoji counts as 2), at most 9 lines, and no control characters except newline. Wrapped lines can still exceed 9 on screen, so check visually.
 - No auto-forwarding, avatar movement, microphone, voice, Discord, background service, or other AI Astra methods.
 
-## Changes Claude made to the original bridge
+## Changes Claude made to the original embodiment layer
 
 - Malformed HTTP responses (`http.client.HTTPException`) now give a clean error, not a traceback.
 - `ask` input is capped at 4,000 characters.
@@ -65,5 +65,5 @@ If AI Astra needs a token, set it for the session only: `$env:AI_ASTRA_BACKEND_A
 
 ## Limitations
 
-- AI Astra's live endpoint, port and token are unknown. The contract comes from `maimain/headless_api.py` and `backend_api.py` as recorded in HANDOFF-CLAUDE.md. Claude did not re-read the archive.
+- AI Astra's live endpoint, port and token are unknown. The contract comes from `headless_api.py` and `backend_api.py` as recorded in HANDOFF-CLAUDE.md. Claude did not re-read the archive.
 - The OSC chatbox format follows VRChat's docs. Only the byte layout is tested, not how VRChat displays it.

@@ -17,7 +17,7 @@ from PySide6.QtCore import Qt
 from pyvistaqt import QtInteractor
 
 # --- Constants for File Names ---
-DB_FILE = 'ai_astra_phoenix_brain.db'
+DB_FILE = 'ai_astra_brain.db'
 SEMANTIC_CLUSTERS_FILE = 'ai_astra_semantic_clusters.json'
 ATTENTION_FILE = 'ai_astra_attention_weights.json'
 

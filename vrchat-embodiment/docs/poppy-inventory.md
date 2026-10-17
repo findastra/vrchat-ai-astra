@@ -55,9 +55,9 @@ These packages are 1.4 to 1.7 GB, so each scan takes a few minutes. The output i
 
 | Astra signal | Target | Status |
 |---|---|---|
-| Reviewed line of speech | `/chatbox/input` draft | **Implemented** (bridge `queue`) |
+| Reviewed line of speech | `/chatbox/input` draft | **Implemented** (embodiment `queue`) |
 | Mood | Poppy's face system. Proposed small set: neutral, happy, surprised, sad, embarrassed, mad, sleep | **Parameter name unknown.** Faces are gesture-driven (`GestureLeft`/`GestureRight`, VRChat built-ins). VRChat's OSC config marks some parameters as output-only. Check whether these accept input in the avatar's OSC JSON before relying on them. If they don't, a face-override Int on the Astra copy would be needed (8 synced bits, an avatar edit). |
-| Look toggles (fans, sparkle hands, lanyard) | Poppy's existing menu | Set by hand, not by the bridge |
+| Look toggles (fans, sparkle hands, lanyard) | Poppy's existing menu | Set by hand, not by the embodiment layer |
 | Face tracking | VRCFT variant | Not used for an AI-driven avatar. The NO VRCFT variant is simpler |
 
 Once an Astra copy is uploaded privately and worn with OSC on, VRChat's `...\LocalLow\VRChat\VRChat\OSC\usr_<id>\Avatars\avtr_<id>.json` gives the real parameter names and which ones accept input.

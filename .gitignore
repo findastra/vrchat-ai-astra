@@ -29,8 +29,8 @@ _*.py
 evaluation_results/
 
 # Learned memory / brain state (never commit; each install learns its own)
-*_phoenix_model.json
-*_phoenix_vocab.json
+ai_astra_model.json
+ai_astra_vocab.json
 *_semantic_clusters.json
 *_attention_weights.json
 *_context_scores.json
@@ -38,3 +38,6 @@ evaluation_results/
 
 # Dev output (UI audit screenshots, logs)
 output/
+
+# AI Astra Voice keeps its own conversation state on the PC, never in git
+voice/state/

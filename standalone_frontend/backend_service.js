@@ -163,7 +163,7 @@ class BackendService extends EventEmitter {
     if (isPyLauncher(this.pythonPath)) {
       args.push('-3');
     }
-    args.push('-m', 'ai_astra_main.headless_api', 'serve-http', '--host', this.host, '--port', String(port));
+    args.push('-m', 'headless_api', 'serve-http', '--host', this.host, '--port', String(port));
     return {
       command: this.pythonPath,
       args,
@@ -207,7 +207,7 @@ class BackendService extends EventEmitter {
       childEnv.AI_ASTRA_STATE_DIR = this.stateDir;
     }
     const child = spawn(spawnConfig.command, spawnConfig.args, {
-      cwd: this.workspaceRoot,
+      cwd: this.aiAstraRoot,
       stdio: ['ignore', 'pipe', 'pipe'],
       env: childEnv,
       windowsHide: true,

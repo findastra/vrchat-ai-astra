@@ -161,7 +161,6 @@ def _load_runtime_brain_factory(runtime_config: dict[str, Any]):
     if isinstance(configured_module, str) and configured_module:
         module_candidates.append(configured_module)
     module_candidates.extend([
-        'ai_astra_main.backend_runtime',
         'backend_runtime',
     ])
 
@@ -1737,8 +1736,8 @@ class AIAstraBackendAPI:
         return {
             'app_dir': self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__)),
             'db_file': self._get_db_file(),
-            'runtime_module': self.api_config.get('runtime_module', self.api_config.get('desktop_module', 'ai_astra_main.backend_runtime')),
-            'desktop_module': self.api_config.get('desktop_module', self.api_config.get('runtime_module', 'ai_astra_main.backend_runtime')),
+            'runtime_module': self.api_config.get('runtime_module', self.api_config.get('desktop_module', 'backend_runtime')),
+            'desktop_module': self.api_config.get('desktop_module', self.api_config.get('runtime_module', 'backend_runtime')),
             'use_hsb_backend': bool(self.settings_manager.get('use_hsb_backend', False)),
             'base_priority_boost': int(self.api_config.get('training_chunk_priority_boost', 2) or 2),
         }
@@ -2699,12 +2698,12 @@ class AIAstraBackendAPI:
             return {
                 'success': True,
                 'file_path': file_path,
-                'message': f"Brain exported to {file_path}\nYou can open this file in the Newtype HSB Viewer.",
+                'message': f"Brain exported to {file_path}\nYou can open this file in the High-Speed Brain Viewer.",
             }
 
         create_hsb_brain_from_data = self._load_hsb_writer()
         if create_hsb_brain_from_data is None:
-            return {'success': False, 'message': 'Newtype/HSB support not available.'}
+            return {'success': False, 'message': 'High-speed brain (HSB) support is not available.'}
 
         patterns, associations, clusters = self._collect_hsb_export_data()
         create_hsb_brain_from_data(file_path, patterns, associations, clusters)
@@ -2716,14 +2715,14 @@ class AIAstraBackendAPI:
             'message': (
                 f"Brain exported to {file_path}\n"
                 f"Patterns: {len(patterns)}, Associations: {len(associations)}\n"
-                f"You can open this file in the Newtype HSB Viewer."
+                f"You can open this file in the High-Speed Brain Viewer."
             ),
         }
 
     def import_brain_from_hsb(self, file_path: str) -> dict[str, Any]:
         read_hsb_brain = self._load_hsb_reader()
         if read_hsb_brain is None:
-            return {'success': False, 'message': 'Newtype/HSB support not available.'}
+            return {'success': False, 'message': 'High-speed brain (HSB) support is not available.'}
         if not file_path:
             return {'success': False, 'message': 'No HSB import path provided.'}
 
@@ -3360,7 +3359,7 @@ class AIAstraBackendAPI:
         if db_file and db_file.endswith('.db'):
             return db_file[:-3] + '.hsb'
         app_dir = self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(app_dir, 'ai_astra_phoenix_brain.hsb')
+        return os.path.join(app_dir, 'ai_astra_brain.hsb')
 
     def _sidecar_targets(self) -> dict[str, str]:
         return {
@@ -3533,9 +3532,9 @@ class AIAstraBackendAPI:
 
     def _load_hsb_writer(self):
         app_dir = self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__))
-        newtype_dir = os.path.join(app_dir, 'Newtype')
-        if newtype_dir not in sys.path and os.path.isdir(newtype_dir):
-            sys.path.insert(0, newtype_dir)
+        high_speed_dir = os.path.join(app_dir, 'high_speed_brain')
+        if high_speed_dir not in sys.path and os.path.isdir(high_speed_dir):
+            sys.path.insert(0, high_speed_dir)
         try:
             from hsb_format import create_hsb_brain_from_data  # type: ignore[reportMissingImports]
         except ImportError:
@@ -3544,9 +3543,9 @@ class AIAstraBackendAPI:
 
     def _load_hsb_reader(self):
         app_dir = self.api_config.get('app_dir') or os.path.dirname(os.path.abspath(__file__))
-        newtype_dir = os.path.join(app_dir, 'Newtype')
-        if newtype_dir not in sys.path and os.path.isdir(newtype_dir):
-            sys.path.insert(0, newtype_dir)
+        high_speed_dir = os.path.join(app_dir, 'high_speed_brain')
+        if high_speed_dir not in sys.path and os.path.isdir(high_speed_dir):
+            sys.path.insert(0, high_speed_dir)
         try:
             from hsb_format import read_hsb_brain  # type: ignore[reportMissingImports]
         except ImportError:

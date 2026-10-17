@@ -56,11 +56,11 @@ Principles: don't add anything to Meep in v1. Drive only what already exists or 
 
 | Astra signal | VRChat target | Source | Status |
 |---|---|---|---|
-| Reviewed line of speech | `/chatbox/input` s, F, F (draft) | VRChat built-in | **Implemented** (`bridge.py queue`) |
+| Reviewed line of speech | `/chatbox/input` s, F, F (draft) | VRChat built-in | **Implemented** (`embodiment.py queue`) |
 | "Astra is composing" | `/chatbox/typing` bool | VRChat built-in (documented) | Proposed. It would be a 1-line addition, but it isn't added because the scope says no automatic behaviour |
 | Mood / expression | `/avatar/parameters/<Meep face param>` | Meep's existing expression control, name **unknown** | Proposed: map a small enum (neutral, happy, surprised, sad) to whatever Meep uses, after the scan or OSC JSON shows the real name and type |
-| Outfit / look | Meep's existing toggles | Meep menu | Set by hand in the expression menu. Not driven by the bridge |
+| Outfit / look | Meep's existing toggles | Meep menu | Set by hand in the expression menu. Not driven by the embodiment layer |
 | Speaking glow (optional) | New `AstraSpeaking` Bool, 1 synced bit | Would need an avatar edit | **Deferred**: it changes Meep, needs its own Avatar project, and should wait until the bit budget is known |
-| Lip sync / voice | `Viseme`, `Voice` (built-in, driven by the mic) | VRChat built-in | Out of scope (no microphone or TTS in this bridge) |
+| Lip sync / voice | `Viseme`, `Voice` (built-in, driven by the mic) | VRChat built-in | Out of scope (no microphone or TTS in this embodiment layer) |
 
 Sending to a parameter that doesn't exist on the worn avatar does nothing, so parameter output should be added only after the real names are confirmed.

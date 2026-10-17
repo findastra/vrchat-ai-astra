@@ -11,9 +11,9 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QTextCursor
 
-DB_FILE = 'ai_astra_phoenix_brain.db'
-NN_MODEL_FILE = 'ai_astra_phoenix_model.json'
-VOCAB_FILE = 'ai_astra_phoenix_vocab.json'
+DB_FILE = 'ai_astra_brain.db'
+NN_MODEL_FILE = 'ai_astra_model.json'
+VOCAB_FILE = 'ai_astra_vocab.json'
 ATTENTION_FILE = 'ai_astra_attention_weights.json'
 CONTEXT_SCORES_FILE = 'ai_astra_context_scores.json'
 SEMANTIC_CLUSTERS_FILE = 'ai_astra_semantic_clusters.json'
@@ -5707,7 +5707,7 @@ class AIAstraApp(QMainWindow):
             <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.5;">I'm a <b>Statistical Generative Model (SGM)</b> - a tensor-free alternative to traditional AI architectures.</p>
             
             <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #BDC3C7;">
-                <h3 style="margin-bottom: 10px; font-size: 16px; color: #2C3E50;">SGM Architecture Features:</h3>
+                <h3 style="margin-bottom: 10px; font-size: 16px; color: #2C3E50;">Architecture features:</h3>
                 <ul style="text-align: left; font-size: 13px; line-height: 1.6; color: #34495E;">
                     <li><b>Tensor-Free Design:</b> No complex tensor operations, optimized for CPU processing</li>
                     <li><b>Statistical Learning:</b> Generates responses from learned statistical patterns</li>

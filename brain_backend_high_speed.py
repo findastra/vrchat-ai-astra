@@ -1,10 +1,10 @@
 """
-Bridge: use Newtype's high-speed storage as the pattern/association backend for Main.
+Use the high-speed brain storage as the pattern/association backend.
 Import from main app: set HybridBrain to use this backend for a faster, single-file (.hsb) experience.
 
 Usage (once Main is refactored to use a backend):
-  from brain_backend_newtype import NewtypeBrainBackend
-  backend = NewtypeBrainBackend(base_path=".", hsb_file="ai_astra_phoenix_brain.hsb")
+  from brain_backend_high_speed import HighSpeedBrainBackend
+  backend = HighSpeedBrainBackend(base_path=".", hsb_file="ai_astra_brain.hsb")
   # Then pass backend to HybridBrain instead of raw SQLite.
 """
 
@@ -13,14 +13,14 @@ import sys
 import math
 from collections import defaultdict
 
-# Newtype: prefer package import, else run from Newtype/ or add to path
+# high_speed_brain: prefer package import, else add the folder to the path
 _here = os.path.dirname(os.path.abspath(__file__))
-_newtype_dir = os.path.join(_here, "Newtype")
-if _newtype_dir not in sys.path and os.path.isdir(_newtype_dir):
-    sys.path.insert(0, _newtype_dir)
+_high_speed_dir = os.path.join(_here, "high_speed_brain")
+if _high_speed_dir not in sys.path and os.path.isdir(_high_speed_dir):
+    sys.path.insert(0, _high_speed_dir)
 try:
-    from Newtype.storage_engine import HighSpeedStorageEngine
-    from Newtype.hsb_format import create_hsb_brain_from_data, read_hsb_brain
+    from high_speed_brain.storage_engine import HighSpeedStorageEngine
+    from high_speed_brain.hsb_format import create_hsb_brain_from_data, read_hsb_brain
 except ImportError:
     from storage_engine import HighSpeedStorageEngine  # type: ignore[reportMissingImports]
     from hsb_format import create_hsb_brain_from_data, read_hsb_brain  # type: ignore[reportMissingImports]
@@ -28,15 +28,15 @@ except ImportError:
 MAX_CONTEXT_SIZE = 8
 
 
-class NewtypeBrainBackend:
+class HighSpeedBrainBackend:
     """
     Implements the core pattern/association storage used by Main's HybridBrain,
-    using Newtype's HighSpeedStorageEngine and optional HSB persistence.
+    using the HighSpeedStorageEngine and optional HSB persistence.
     """
 
     def __init__(self, base_path: str = ".", hsb_file: str = None, use_hsb_persistence: bool = True):
         self.base_path = os.path.abspath(base_path or ".")
-        self.hsb_file = hsb_file or os.path.join(self.base_path, "ai_astra_phoenix_brain.hsb")
+        self.hsb_file = hsb_file or os.path.join(self.base_path, "ai_astra_brain.hsb")
         self.use_hsb_persistence = use_hsb_persistence
         self.engine = HighSpeedStorageEngine(self.base_path)
         self._word_associations_cache = None  # built on demand for coherence scoring
@@ -51,18 +51,18 @@ class NewtypeBrainBackend:
         try:
             self.engine.load_from_disk(path)
         except Exception as e:
-            print(f"Newtype backend: could not load HSB {path}: {e}")
+            print(f"High-speed brain backend: could not load HSB {path}: {e}")
 
     def save_to_hsb(self, path: str = None):
         """Persist current state to an HSB file."""
         path = path or self.hsb_file
         if not path or not isinstance(path, str):
-            print("Newtype backend: save_to_hsb skipped (no path)")
+            print("High-speed brain backend: save_to_hsb skipped (no path)")
             return
         try:
             self.engine.save_to_disk(path)
         except Exception as e:
-            print(f"Newtype backend: could not save HSB {path}: {e}")
+            print(f"High-speed brain backend: could not save HSB {path}: {e}")
 
     # ---- Pattern lookup (replacement for _kn_next_probs / dynamic_word_chain) ----
 
@@ -316,12 +316,12 @@ class NewtypeBrainBackend:
 
 # Example: how Main would switch backends (after refactor)
 #
-# In ai_astra_phoenix_desktop.py, HybridBrain.__init__ could do:
+# In ai_astra_desktop.py, HybridBrain.__init__ could do:
 #
-#   use_newtype = os.environ.get("AI_ASTRA_USE_HSB", "").lower() in ("1", "true", "yes")
-#   if use_newtype:
-#       from brain_backend_newtype import NewtypeBrainBackend
-#       self._storage = NewtypeBrainBackend(base_path=".", hsb_file=DB_FILE.replace(".db", ".hsb"))
+#   use_high_speed = os.environ.get("AI_ASTRA_USE_HSB", "").lower() in ("1", "true", "yes")
+#   if use_high_speed:
+#       from brain_backend_high_speed import HighSpeedBrainBackend
+#       self._storage = HighSpeedBrainBackend(base_path=".", hsb_file=DB_FILE.replace(".db", ".hsb"))
 #       self.cur = None
 #       self.con = None
 #   else:

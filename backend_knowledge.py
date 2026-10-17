@@ -21,7 +21,7 @@ LEXICON_BOOTSTRAP = [
     ('hates', 'relation_trigger', 'avoids', 0.85, 'medium', 'Negative preference relation trigger.'),
     ('can', 'relation_trigger', 'capable_of', 0.8, 'medium', 'Capability relation trigger.'),
     ('astra', 'entity_alias', 'astra', 1.0, 'medium', 'AI Astra self reference.'),
-    ('phoenix', 'entity_alias', 'astra', 0.8, 'medium', 'AI Astra self reference.'),
+    ('ai astra', 'entity_alias', 'astra', 0.9, 'medium', 'AI Astra self reference.'),
     ('i', 'self_reference', 'speaker', 1.0, 'high', 'Speaker self reference.'),
     ('you', 'self_reference', 'listener', 1.0, 'high', 'Listener reference.'),
 ]
@@ -1105,8 +1105,7 @@ class KnowledgeStore:
             'with',
             'your',
             'you',
-            'astra',
-            'phoenix',
+            'astra',
             'sgm',
             'system',
             'over',
@@ -1119,7 +1118,7 @@ class KnowledgeStore:
         }
         for concept_name in query_profile.get('concept_names', [])[:4]:
             normalized_name = self._normalize_text(concept_name)
-            if normalized_name in {'astra', 'phoenix', 'sgm', 'sgm system'}:
+            if normalized_name in {'astra', 'ai astra', 'sgm', 'sgm system'}:
                 continue
             focus_terms.update(
                 token for token in normalized_name.split()
@@ -1416,7 +1415,7 @@ class KnowledgeStore:
         focus_terms = self._build_query_focus_terms(query_profile)
         fact_focus_terms = {
             term for term in fact_terms
-            if term not in {'astra', 'phoenix', 'sgm', 'system'}
+            if term not in {'astra', 'sgm', 'system'}
         }
         topical_overlap = len(focus_terms.intersection(fact_focus_terms))
         concept_match = 0.0
@@ -1447,9 +1446,9 @@ class KnowledgeStore:
         intent = str(query_profile.get('intent', '') or '').strip().lower()
         if focus_terms:
             topical_bonus += min(0.85, topical_overlap * 0.32)
-            if intent == 'explanation' and topical_overlap <= 0 and subject in {'astra', 'phoenix'}:
+            if intent == 'explanation' and topical_overlap <= 0 and subject in {'astra'}:
                 topical_bonus -= 1.15
-            elif intent in {'answer', 'guidance'} and topical_overlap <= 0 and subject in {'astra', 'phoenix'}:
+            elif intent in {'answer', 'guidance'} and topical_overlap <= 0 and subject in {'astra'}:
                 topical_bonus -= 0.45
         surface_penalty = self._fact_surface_penalty(fact, query_profile)
         consistency_penalty = 0.0
@@ -1490,7 +1489,7 @@ class KnowledgeStore:
             penalty += 1.45
         if not self._is_clean_concept_surface(subject):
             penalty += 1.35
-        if intent in {'definition', 'self_description'} and subject not in {'astra', 'phoenix'} and len(subject.split()) > 4:
+        if intent in {'definition', 'self_description'} and subject not in {'astra'} and len(subject.split()) > 4:
             penalty += min(0.8, (len(subject.split()) - 4) * 0.15)
         if intent in {'definition', 'self_description'} and relation in {'is_a', 'part_of', 'role', 'belongs_to'} and object_kind != 'concept':
             penalty += 0.85
@@ -1514,7 +1513,7 @@ class KnowledgeStore:
                     str(fact.get('object', '') or ''),
                 ])
             ).split()
-            if term not in {'astra', 'phoenix', 'sgm', 'system'}
+            if term not in {'astra', 'sgm', 'system'}
         }
         return bool(focus_terms.intersection(fact_terms))
 
@@ -2506,7 +2505,7 @@ class KnowledgeStore:
                 return 'current_user'
             if speaker == 'user':
                 return 'astra'
-        if normalized in {'astra', 'astra phoenix', 'phoenix'}:
+        if normalized in {'astra', 'ai astra'}:
             return 'astra'
         if normalized in {'user', 'the user'}:
             return 'current_user'
@@ -2594,7 +2593,7 @@ class KnowledgeStore:
         if not normalized_query:
             return False
         tokens = set(normalized_query.split())
-        if 'astra' in tokens or 'phoenix' in tokens:
+        if 'astra' in tokens:
             return True
         self_reference_phrases = (
             'who are you',

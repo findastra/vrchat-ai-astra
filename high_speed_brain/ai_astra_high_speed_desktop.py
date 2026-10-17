@@ -1,5 +1,5 @@
 """
-AI Astra Phoenix Desktop - High-Speed Edition
+AI Astra Desktop - High-Speed Edition
 Integrated with proprietary HSB storage engine for maximum performance
 """
 
@@ -23,10 +23,10 @@ from hsb_format import read_hsb_brain, create_hsb_brain_from_data
 import sqlite3
 
 # File constants - support both SQLite and HSB formats
-DB_FILE = 'ai_astra_phoenix_brain.db'
-HSB_FILE = os.path.join('brain_data', 'ai_astra_phoenix_brain.hsb')
-NN_MODEL_FILE = 'ai_astra_phoenix_model.json'
-VOCAB_FILE = 'ai_astra_phoenix_vocab.json'
+DB_FILE = 'ai_astra_brain.db'
+HSB_FILE = os.path.join('brain_data', 'ai_astra_brain.hsb')
+NN_MODEL_FILE = 'ai_astra_model.json'
+VOCAB_FILE = 'ai_astra_vocab.json'
 ATTENTION_FILE = 'ai_astra_attention_weights.json'
 CONTEXT_SCORES_FILE = 'ai_astra_context_scores.json'
 SEMANTIC_CLUSTERS_FILE = 'ai_astra_semantic_clusters.json'
@@ -634,17 +634,17 @@ class HighSpeedHybridBrain:
         
         return f"Generation Success Rate: {success_rate:.2%} ({total_attempts - self.generation_failures}/{total_attempts})"
 
-class AIAstraPhoenixDesktop(QMainWindow):
-    """Main AI Astra Phoenix Desktop application with high-speed storage - Complete Feature Set"""
+class AIAstraDesktop(QMainWindow):
+    """Main AI Astra Desktop application with high-speed storage - Complete Feature Set"""
     
     def __init__(self):
         super().__init__()
-        print("Initializing AI Astra Phoenix Desktop - High-Speed Edition...")
+        print("Initializing AI Astra Desktop - High-Speed Edition...")
         self.brain = HighSpeedHybridBrain()
         self.file_training_worker = None
         
         print("Setting up UI...")
-        self.setWindowTitle("AI Astra Phoenix Desktop - High-Speed Edition v2.0")
+        self.setWindowTitle("AI Astra Desktop - High-Speed Edition v2.0")
         self.setGeometry(100, 100, 1200, 800)
         
         # Apply professional styling
@@ -774,7 +774,7 @@ class AIAstraPhoenixDesktop(QMainWindow):
         # Setup menu
         self.setup_menu()
         
-        print("AI Astra Phoenix Desktop - High-Speed Edition v2.0 is ready!")
+        print("AI Astra Desktop - High-Speed Edition v2.0 is ready!")
         
     def create_conversation_tab(self):
         """Create the main conversation tab"""
@@ -797,7 +797,7 @@ class AIAstraPhoenixDesktop(QMainWindow):
         top_layout.setContentsMargins(15, 5, 15, 5)
         top_layout.setSpacing(15)
         
-        self.status_label = QLabel("AI Astra Phoenix - High-Speed Edition v2.0")
+        self.status_label = QLabel("AI Astra - High-Speed Edition v2.0")
         self.status_label.setStyleSheet("color: white; font-weight: bold; font-size: 13px;")
         
         self.quality_label = QLabel("Quality: Initializing...")
@@ -832,7 +832,7 @@ class AIAstraPhoenixDesktop(QMainWindow):
         # Welcome message
         welcome_message = '''
         <div style="font-family: 'Tahoma', Arial, sans-serif; color: #333333;">
-            <h2 style="color: #2C3E50; margin-bottom: 15px;">AI Astra Phoenix - High-Speed AI Brain</h2>
+            <h2 style="color: #2C3E50; margin-bottom: 15px;">AI Astra - High-Speed AI Brain</h2>
             
             <div style="background: #E8F4FD; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3498DB;">
                 <h3 style="color: #2980B9; margin-top: 0;">High-Speed Features:</h3>
@@ -950,7 +950,7 @@ class AIAstraPhoenixDesktop(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         
-        layout.addWidget(QLabel("<h2>AI Astra Phoenix High-Speed Brain Analysis</h2>"))
+        layout.addWidget(QLabel("<h2>AI Astra High-Speed Brain Analysis</h2>"))
         
         # Brain controls
         controls_layout = QHBoxLayout()
@@ -1003,7 +1003,7 @@ class AIAstraPhoenixDesktop(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         
-        layout.addWidget(QLabel("<h2>AI Astra Phoenix High-Speed Settings</h2>"))
+        layout.addWidget(QLabel("<h2>AI Astra High-Speed Settings</h2>"))
         
         # Performance settings
         perf_group = QGroupBox("Performance Settings")
@@ -1457,11 +1457,11 @@ def main():
     app = QApplication(sys.argv)
     
     # Set application properties
-    app.setApplicationName("AI Astra Phoenix Desktop - High-Speed Edition")
+    app.setApplicationName("AI Astra Desktop - High-Speed Edition")
     app.setApplicationVersion("2.0")
     
     # Create and show main window
-    window = AIAstraPhoenixDesktop()
+    window = AIAstraDesktop()
     window.show()
     
     # Run application

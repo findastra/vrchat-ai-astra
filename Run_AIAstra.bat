@@ -2,7 +2,7 @@
 setlocal
 title AI Astra Standalone
 
-rem Safe launcher: this file does not run PowerShell, install packages, or start Newtype.
+rem Safe launcher: this file does not run PowerShell, install packages, or start the legacy high-speed desktop.
 set "ROOT=%~dp0"
 set "ELECTRON=%ROOT%standalone_frontend\node_modules\electron\dist\electron.exe"
 

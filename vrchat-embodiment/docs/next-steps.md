@@ -5,7 +5,7 @@ Claude, 2026-09-30.
 ## Next smallest live test (chatbox only; no AI Astra, no avatar change)
 
 1. Owner opens VRChat in desktop mode, alone in a private or home instance, with any avatar. In the Action Menu, go to Options > OSC and enable it.
-2. `& $py bridge.py preview "Astra bridge test ✨"` shows the packet, then `& $py bridge.py queue "Astra bridge test ✨"`.
+2. `& $py embodiment.py preview "Astra embodiment test ✨"` shows the packet, then `& $py embodiment.py queue "Astra embodiment test ✨"`.
 3. Expected: the chatbox keyboard opens with that text pre-filled, and nothing is sent yet. Owner checks that the emoji renders, then sends or clears it.
 4. Record the result in ACTIVITY.md. A pass means VRChat showed the draft, not just that the UDP packet was sent.
 
@@ -13,7 +13,7 @@ Before step 2, run the Windows test suite once with the bundled Python (see READ
 
 ## Test after that: AI Astra health only
 
-`& $py bridge.py status --endpoint http://127.0.0.1:<port>` once the owner confirms where AI Astra runs. `status` doesn't change AI Astra's state. `ask` does (generate_response can write conversation/learning state), so the first `ask` needs the owner's go-ahead and ideally a disposable AI Astra state directory (`AI_ASTRA_STATE_DIR`), not the trained brain.
+`& $py embodiment.py status --endpoint http://127.0.0.1:<port>` once the owner confirms where AI Astra runs. `status` doesn't change AI Astra's state. `ask` does (generate_response can write conversation/learning state), so the first `ask` needs the owner's go-ahead and ideally a disposable AI Astra state directory (`AI_ASTRA_STATE_DIR`), not the trained brain.
 
 ## Open decisions for the owner
 
@@ -24,7 +24,7 @@ Avatar base (decides Meep vs Poppy)
 - Who wears Astra in VRChat? OSC talks to the VRChat client on this PC, so Astra needs her own logged-in client and account (the owner creates or signs in to it). Otherwise it's just the owner wearing Astra.
 
 Runtime
-- Which AI Astra instance is "Astra's brain": the live one AI Astra runs, or a separate copy from `maimain.zip` with its own `AI_ASTRA_STATE_DIR`? Talking to the live one changes her state.
+- Which AI Astra instance is "Astra's brain": the live one AI Astra runs, or a separate test copy with its own `AI_ASTRA_STATE_DIR`? Talking to the live one changes her state.
 - Where it runs (this PC?), its port, and whether it uses `AI_ASTRA_BACKEND_AUTH_TOKEN`.
 - Who reviews replies before `queue`: the owner, or Astra in Codex with the owner watching?
 
