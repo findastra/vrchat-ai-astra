@@ -11,7 +11,7 @@
   "status": "hatching",
   "cage": {
     "topic": "pet-app",
-    "home": "https://github.com/findastra/astras-pet-apps",
+    "home": "https://github.com/findastra/astras-pet-os",
     "submit": {
       "date": "2026-10-17",
       "job": "Watches the health of AI Astra, both while she runs and while she is being worked on offline, so problems show up before a session."
@@ -21,5 +21,10 @@
   "source": "https://github.com/findastra/vrchat-ai-astra/tree/v0.1.0-20261008-pets",
   "built_with": "OpenAI Codex (GPT-6), 2026-10-08; OpenAI Codex (GPT-6), 2026-10-11",
   "desktop_pet": "desktop-pet-20261011.json",
-  "desktop_art_built_with": "OpenAI Codex (GPT-6), built-in imagegen and native renderer, 2026-10-11"
+  "desktop_art_built_with": "OpenAI Codex (GPT-6), built-in imagegen and native renderer, 2026-10-11",
+  "audit": {
+    "cadence": "weekly",
+    "subject": "AI Astra: her mind, VRChat body and voice",
+    "needs": "the AI Astra app started on your PC"
+  }
 }
