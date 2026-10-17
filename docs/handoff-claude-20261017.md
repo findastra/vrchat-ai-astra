@@ -1,4 +1,4 @@
-status: open (waiting on Astra: merge this branch, repo rename, PC folder move)
+status: open (waiting on Astra: PC folder move, repo description)
 for: any
 from: Claude Opus 5.5 (claude-opus-5-5), 2026-10-17
 needs: AGENTS.md, README.md, pet.json, this file; findastra/astras-pet-os AGENTS.md "Before any work"
@@ -8,8 +8,8 @@ needs: AGENTS.md, README.md, pet.json, this file; findastra/astras-pet-os AGENTS
 
 ## What I did
 
-Branch `claude/embodied-ai-cleanup-20261017` in `findastra/vrchat-ai-astra` (not on `main`; merges only with
-Astra's OK). Verified before pushing: 26 Python files and 9 JavaScript files compile; 39 contract tests pass; the
+Branch `claude/embodied-ai-cleanup-20261017` in `findastra/vrchat-ai-astra`, merged to `main` as pull request #2
+on 2026-10-17; the repo was then renamed `findastra/the-astral-plane`. Verified before pushing: 26 Python files and 9 JavaScript files compile; 39 contract tests pass; the
 HTTP and stdio transport smoke test passes when started from another folder; 49 embodiment tests pass; the
 Electron launcher (`standalone_frontend/backend_service.js`) starts the backend and gets a reply. All tests ran
 against a throwaway `AI_ASTRA_STATE_DIR`, never her real brain.
@@ -36,13 +36,13 @@ against a throwaway `AI_ASTRA_STATE_DIR`, never her real brain.
 
 ## Not done (in order)
 
-1. **Merge** this branch (Astra), then **rename the repo** `vrchat-ai-astra` → `the-astral-plane` (GitHub keeps
-   old links working) and update its description to the embodied-AI text.
-2. **PC folder:** move the working copy to `%USERPROFILE%\Documents\Astra's Pet Apps\the-astral-plane` through
-   File Master (one copy per repo), which clears the 🔌 error on INTELLIGENCE-LEVELS.md.
-3. **astras-pet-os core text** still says "bridge" in `pets.json` (audit subject), `system-map.json`,
-   `INTELLIGENCE-LEVELS.md`, `SECURITY.md`, `MOOD-KEY.md` and the interface builder
-   (`scripts/build-interfaces-20261008.mjs`); it also links the old file names. Needs a core pull request.
+1. **Done 2026-10-17:** merged (#2) and renamed to `the-astral-plane`; astras-pet-os follows the new name in
+   branch `claude/the-astral-plane-repo-rename-20261017`. Still to do: the repo description still says "bridge";
+   use "The Astral Plane: home of AI Astra, an embodied AI for VRChat."
+2. **PC folder:** move the working copy to `%USERPROFILE%\Documents\Astra's PetOS\the-astral-plane` through
+   File Master (one copy per repo), which clears the 🔌 error on INTELLIGENCE-LEVELS.md. Plan:
+   `file-master/reports/2026-10-17-the-astral-plane-move-plan.csv` (unapproved, blockers written in each row).
+3. **Done 2026-10-17:** astras-pet-os core text says embodied AI, not bridge (astras-pet-os #42).
 4. **Engine duplication (biggest technical risk):** `ai_astra_desktop.py` (≈7.4k lines) and `backend_runtime.py`
    (≈7.2k lines) duplicate about 250 functions, and `high_speed_brain/` is a third variant. The desktop app finds
    its state files relative to the folder it was started from, so a different start folder silently creates a
